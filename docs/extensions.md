@@ -73,8 +73,9 @@ Extensions are executable code running with the gateway user's privileges. Load
 only extensions you have chosen to trust. They can read local files, make network
 requests, or alter behavior directly; a clean API receipt is not a sandbox.
 
-The worker receives a deliberately limited environment instead of inherited
-cloud-provider credentials and global Pi settings. An extension that expects
+The worker receives a deliberately limited environment plus only its selected
+cloud API key, when cloud inference is explicitly configured. It does not inherit
+unrelated cloud credentials or global Pi settings. An extension that expects
 arbitrary shell environment variables may need an explicit integration change;
 do not assume the gateway forwards them. Extensions can still use filesystem
 access with the user's privileges.

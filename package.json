@@ -1,6 +1,6 @@
 {
   "name": "pi-runtime-gateway",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A local HTTP runtime for disposable Pi coding-agent sessions with explicit profiles, streaming, and cancellation.",
   "private": true,
   "license": "MIT",
@@ -18,7 +18,8 @@
     "setup": "node scripts/setup.mjs",
     "install:local": "node scripts/install.mjs",
     "test": "node --test test/*.test.mjs",
-    "prove": "node scripts/prove.mjs"
+    "prove": "node scripts/prove.mjs",
+    "doctor": "node scripts/doctor.mjs"
   },
   "engines": {
     "node": ">=22"

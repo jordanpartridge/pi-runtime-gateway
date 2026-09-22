@@ -143,7 +143,7 @@ test('an explicit missing env file fails without disclosing its contents or path
 
 for (const [name, value] of [
   ['unknown profile settings', { unknown: 'secret-value' }],
-  ['non-Ollama providers', { provider: 'cloud' }],
+  ['invalid provider slugs', { provider: '../cloud' }],
   ['an arbitrary agent directory', { agentDir: '/secret-global-agent' }],
   ['write tools', { tools: ['read', 'write'] }],
   ['duplicate tools', { tools: ['read', 'read'] }],
@@ -247,7 +247,7 @@ test('prepareAgent rejects an auth symlink even if its target contains an empty 
   mkdirSync(resolve(stateDir, 'agent'), { recursive: true });
   fixture.write('external-auth.json', '{}');
   symlinkSync(resolve(fixture.root, 'external-auth.json'), resolve(stateDir, 'agent/auth.json'));
-  assert.throws(() => prepareAgent(profile, stateDir), /regular empty JSON object/);
+  assert.throws(() => prepareAgent(profile, stateDir), /regular JSON file/);
   assert.equal(existsSync(resolve(stateDir, 'agent/models.json')), false);
 });
 
@@ -257,6 +257,122 @@ test('prepareAgent also refuses a dangling auth symlink instead of leaving it fo
   const { profile, stateDir } = fixture.load();
   mkdirSync(resolve(stateDir, 'agent'), { recursive: true });
   symlinkSync(resolve(fixture.root, 'does-not-exist.json'), resolve(stateDir, 'agent/auth.json'));
-  assert.throws(() => prepareAgent(profile, stateDir), /regular empty JSON object/);
+  assert.throws(() => prepareAgent(profile, stateDir), /regular JSON file/);
   assert.equal(existsSync(resolve(fixture.root, 'does-not-exist.json')), false);
+});
+
+
+test('cloud configuration separates the provider credential from the serializable profile', t => {
+  const fixture = workspace(t);
+  const key = 'cloud-secret-must-never-be-persisted';
+  const result = override(fixture, { provider: 'anthropic', model: 'claude-test-model' }, { PI_GATEWAY_API_KEY: key });
+  assert.equal(result.profile.provider, 'anthropic');
+  assert.equal(result.profile.model, 'claude-test-model');
+  assert.deepEqual(result.workerEnv, { PI_GATEWAY_PROVIDER_API_KEY: key });
+  assert.equal(JSON.stringify(result.profile).includes(key), false);
+  assert.equal(Object.hasOwn(result.profile, 'apiKey'), false);
+  assert.equal(Object.hasOwn(result.profile, 'workerEnv'), false);
+});
+
+test('dotenv cloud provider/model/key are overridden only by explicit process values', t => {
+  const fixture = workspace(t);
+  fixture.write('.env', 'PI_GATEWAY_PROVIDER=anthropic\nPI_GATEWAY_MODEL=claude-dotenv\nPI_GATEWAY_API_KEY=dotenv-secret\n');
+  const fromFile = fixture.load();
+  assert.equal(fromFile.profile.provider, 'anthropic');
+  assert.equal(fromFile.profile.model, 'claude-dotenv');
+  assert.deepEqual(fromFile.workerEnv, { PI_GATEWAY_PROVIDER_API_KEY: 'dotenv-secret' });
+  const fromProcess = fixture.load({ PI_GATEWAY_PROVIDER: 'openai', PI_GATEWAY_MODEL: 'gpt-explicit', PI_GATEWAY_API_KEY: 'process-secret' });
+  assert.equal(fromProcess.profile.provider, 'openai');
+  assert.equal(fromProcess.profile.model, 'gpt-explicit');
+  assert.deepEqual(fromProcess.workerEnv, { PI_GATEWAY_PROVIDER_API_KEY: 'process-secret' });
+  assert.equal(JSON.stringify(fromProcess.profile).includes('secret'), false);
+});
+
+test('cloud requires an explicit provider model and gateway API key with safe error messages', t => {
+  const fixture = workspace(t);
+  assert.throws(() => fixture.load({ PI_GATEWAY_PROVIDER: 'openai', PI_GATEWAY_API_KEY: 'never-show-this-secret' }), error => {
+    assert.match(error.message, /Select a model supported/);
+    assert.equal(error.message.includes('never-show-this-secret'), false);
+    return true;
+  });
+  for (const env of [{}, { OPENAI_API_KEY: 'unapproved-global-secret' }, { PI_GATEWAY_API_KEY: '' }, { PI_GATEWAY_API_KEY: ' ' }])
+    assert.throws(() => override(fixture, { provider: 'openai', model: 'gpt-test' }, env), /PI_GATEWAY_API_KEY is required/);
+  assert.throws(() => override(fixture, { provider: 'openai', model: 'gpt-test' }, { PI_GATEWAY_API_KEY: 'never-show-this-secret\ninvalid' }), error => {
+    assert.match(error.message, /PI_GATEWAY_API_KEY/);
+    assert.equal(error.message.includes('never-show-this-secret'), false);
+    return true;
+  });
+  for (const value of [{ apiKey: 'never-show-this-secret' }, { PI_GATEWAY_API_KEY: 'never-show-this-secret' }, { workerEnv: { PI_GATEWAY_PROVIDER_API_KEY: 'never-show-this-secret' } }])
+    assert.throws(() => override(fixture, value), /Unknown profile setting/);
+});
+
+test('local Ollama configuration neither requires nor forwards a cloud credential', t => {
+  const fixture = workspace(t);
+  const result = fixture.load({ PI_GATEWAY_API_KEY: 'irrelevant-secret', OPENAI_API_KEY: 'global-secret' });
+  assert.equal(result.profile.provider, 'ollama');
+  assert.deepEqual(result.workerEnv, {});
+  assert.equal(JSON.stringify(result.profile).includes('secret'), false);
+  const prepared = prepareAgent(result.profile, result.stateDir);
+  assert.equal(existsSync(resolve(prepared.agentDir, 'auth.json')), false);
+  assert.equal(JSON.parse(readFileSync(resolve(prepared.agentDir, 'models.json'), 'utf8')).providers.ollama.apiKey, 'ollama');
+});
+
+test('cloud preparation uses Pi catalogs and persists only the fixed environment reference', t => {
+  const fixture = workspace(t);
+  const key = 'cloud-secret-must-never-be-written';
+  const { profile, stateDir } = fixture.load({ PI_GATEWAY_PROVIDER: 'openai', PI_GATEWAY_MODEL: 'gpt-test', PI_GATEWAY_API_KEY: key });
+  const prepared = prepareAgent(profile, stateDir);
+  assert.deepEqual(JSON.parse(readFileSync(resolve(prepared.agentDir, 'models.json'), 'utf8')), { providers: {} });
+  assert.deepEqual(JSON.parse(readFileSync(resolve(prepared.agentDir, 'auth.json'), 'utf8')), {
+    openai: { type: 'api_key', key: '$PI_GATEWAY_PROVIDER_API_KEY' },
+  });
+  const settings = JSON.parse(readFileSync(resolve(prepared.agentDir, 'settings.json'), 'utf8'));
+  assert.equal(settings.defaultProvider, 'openai');
+  assert.equal(settings.defaultModel, 'gpt-test');
+  for (const file of readdirSync(prepared.agentDir)) {
+    assert.equal(readFileSync(resolve(prepared.agentDir, file), 'utf8').includes(key), false);
+    assert.equal(statSync(resolve(prepared.agentDir, file)).mode & 0o777, 0o600);
+  }
+  prepareAgent(profile, stateDir);
+  assert.equal(JSON.stringify(prepared).includes(key), false);
+});
+
+test('switching providers replaces managed auth references and clears obsolete provider configuration', t => {
+  const fixture = workspace(t);
+  const cloud = fixture.load({ PI_GATEWAY_PROVIDER: 'anthropic', PI_GATEWAY_MODEL: 'claude-test', PI_GATEWAY_API_KEY: 'secret-a' });
+  const agent = prepareAgent(cloud.profile, cloud.stateDir).agentDir;
+  const second = fixture.load({ PI_GATEWAY_PROVIDER: 'openai', PI_GATEWAY_MODEL: 'gpt-test', PI_GATEWAY_API_KEY: 'secret-b' });
+  prepareAgent(second.profile, second.stateDir);
+  assert.deepEqual(Object.keys(JSON.parse(readFileSync(resolve(agent, 'auth.json'), 'utf8'))), ['openai']);
+  const local = fixture.load();
+  prepareAgent(local.profile, local.stateDir);
+  assert.deepEqual(JSON.parse(readFileSync(resolve(agent, 'auth.json'), 'utf8')), {});
+  assert.deepEqual(Object.keys(JSON.parse(readFileSync(resolve(agent, 'models.json'), 'utf8')).providers), ['ollama']);
+  assert.equal(JSON.parse(readFileSync(resolve(agent, 'settings.json'), 'utf8')).defaultProvider, 'ollama');
+  prepareAgent(cloud.profile, cloud.stateDir);
+  assert.deepEqual(JSON.parse(readFileSync(resolve(agent, 'models.json'), 'utf8')), { providers: {} });
+  assert.deepEqual(Object.keys(JSON.parse(readFileSync(resolve(agent, 'auth.json'), 'utf8'))), ['anthropic']);
+});
+
+test('managed auth accepts only exact gateway reference entries and never overwrites arbitrary credentials', t => {
+  const fixture = workspace(t);
+  const { profile, stateDir } = fixture.load({ PI_GATEWAY_PROVIDER: 'openai', PI_GATEWAY_MODEL: 'gpt-test', PI_GATEWAY_API_KEY: 'secret' });
+  for (const existing of [
+    { openai: { type: 'api_key', key: 'real-secret' } },
+    { openai: { type: 'api_key', key: '$OPENAI_API_KEY' } },
+    { openai: { type: 'api_key', key: '$PI_GATEWAY_PROVIDER_API_KEY', env: { EXTRA: 'secret' } } },
+    { openai: { type: 'oauth', key: '$PI_GATEWAY_PROVIDER_API_KEY' } },
+    { 'invalid/provider': { type: 'api_key', key: '$PI_GATEWAY_PROVIDER_API_KEY' } },
+    [],
+  ]) {
+    fixture.write('.runtime/agent/auth.json', existing);
+    assert.throws(() => prepareAgent(profile, stateDir), /credentials or unmanaged references/);
+    assert.deepEqual(JSON.parse(readFileSync(resolve(stateDir, 'agent/auth.json'), 'utf8')), existing);
+  }
+  fixture.write('.runtime/agent/auth.json', {
+    anthropic: { type: 'api_key', key: '$PI_GATEWAY_PROVIDER_API_KEY' },
+    openai: { type: 'api_key', key: '$PI_GATEWAY_PROVIDER_API_KEY' },
+  });
+  prepareAgent(profile, stateDir);
+  assert.deepEqual(Object.keys(JSON.parse(readFileSync(resolve(stateDir, 'agent/auth.json'), 'utf8'))), ['openai']);
 });

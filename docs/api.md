@@ -16,7 +16,7 @@ with a valid token. This API is intended for trusted local service clients.
 | POST | `/runs/:id/cancel` | `202`, run snapshot |
 
 `GET /health` reports configured service state. It does not run inference or prove
-that Ollama can currently serve the model. Its `transport` is `pi-stdio-rpc` and
+that the configured inference provider can currently serve the model. Its `transport` is `pi-stdio-rpc` and
 `openaiCompatible` is `false`.
 
 ## Start a run

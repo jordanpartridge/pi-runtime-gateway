@@ -25,6 +25,11 @@ permissions. Custom extensions execute as the gateway user and can access files
 and networks independently of model tool calls. Do not rely on the policy to
 contain malicious extensions or hostile repositories.
 
+With cloud inference, the chosen provider receives prompts, project guidance,
+retrieved content, and tool results. Local hosting does not imply local inference;
+Ollama URLs can also point to another host. Provider selection is operator-controlled
+and there is no automatic cloud fallback.
+
 Model output and retrieved content are untrusted data. A completed run reports
 successful execution; it does not certify that an answer is correct or authorize
 an external action.
@@ -39,8 +44,10 @@ Review and redact receipts before publishing them. Stderr is represented by
 hash/size metadata rather than raw content, but that does not make other receipts
 safe to publish automatically.
 
-The gateway avoids inheriting cloud-provider credentials into the worker
-environment. This does not hide credentials accessible through the user's
+The gateway forwards only the explicitly configured key to the selected cloud
+worker. It does not inherit unrelated provider credentials, and local Ollama
+workers receive no cloud key. Generated Pi auth holds an environment reference;
+the actual key stays in the private dotenv/process environment. This does not hide credentials accessible through the user's
 filesystem or through a trusted extension. Use a separate operating-system user
 or a suitable sandbox if your deployment needs stronger isolation.
 

@@ -16,8 +16,8 @@ The test suite uses a fake stdio RPC peer. It does not require Pi, Ollama, a mod
 or network access. CI runs the offline suite on Node 22 and 24 on Ubuntu. The
 runtime uses POSIX process groups; Windows is not a supported target.
 
-For real runtime verification, install Pi 0.85.1 separately, make the configured
-model available in Ollama, start the server, and run:
+For real runtime verification, install Pi 0.85.1 separately, configure a local Ollama model or an explicit cloud provider, start the server,
+and run (cloud requests may be billed):
 
 ```sh
 npm run prove

@@ -57,14 +57,14 @@ async function execute(prompt, { cancelOnDelta = false } = {}) {
     const elapsed = Date.parse(receipt.finishedAt) - Date.parse(receipt.cancelRequestedAt);
     check('Cancellation and reap within five seconds', elapsed < 5000, elapsed);
   } else {
-    check('Local model completed', receipt.status === 'completed' && receipt.provider === 'ollama' && receipt.model === profile.model, receipt.status);
+    check('Configured model completed', receipt.status === 'completed' && receipt.provider === profile.provider && receipt.model === profile.model, receipt.status);
     check('Actual text arrived through SSE', liveDelta, run.id);
   }
   return receipt;
 }
 try {
   const health = await request('/health');
-  check('Explicit local profile', health.provider === 'ollama' && health.openaiCompatible === false, health);
+  check('Explicit configured profile', health.provider === profile.provider && health.openaiCompatible === false, health);
   const first = await execute('What is the project proof phrase supplied in your configured project guidance? Return only that phrase.');
   check('Model used context injected by hook', first.text.trim() === 'PI_GATEWAY_CONTEXT_READY', first.text);
   const names = first.hooks.map(h => h.hook);
@@ -83,7 +83,7 @@ try {
   await execute('Write a numbered list of 250 distinct edge cases for a percentage discount function. Give a detailed sentence for each. Continue until all 250 entries are written.', { cancelOnDelta: true });
   const recovery = await execute('Reply with exactly RECOVERY_OK.');
   check('Server accepts fresh work after cancellation', recovery.text.trim() === 'RECOVERY_OK', recovery.text);
-  const report = { provedAt: new Date().toISOString(), result: 'passed', profile: profile.id, model: profile.model,
+  const report = { provedAt: new Date().toISOString(), result: 'passed', profile: profile.id, model: profile.model, provider: profile.provider,
     extensions: profile.extensions.map(e => e.name), checks, runs,
     limitations: ['This synthetic fixture verifies runtime behavior, not real-world review accuracy.',
       'Optional extension loading does not prove successful memory retrieval or semantic review grading.',

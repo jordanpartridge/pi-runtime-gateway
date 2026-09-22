@@ -1,0 +1,17 @@
+{
+  "verifiedAt": "2026-09-22T04:10:15.089696+00:00",
+  "result": "passed",
+  "terminalWizard": {
+    "provider": "ollama",
+    "model": "qwen3-coder-next:48k",
+    "project": "proof",
+    "separateDestination": true,
+    "privateFilesCreated": true,
+    "downloads": false,
+    "inference": false
+  },
+  "savedConfigurationDoctor": "passed",
+  "installedDoctorFromOtherDirectory": "passed",
+  "repeatSetupPreservedExistingFiles": true,
+  "cloudInferenceTested": false
+}

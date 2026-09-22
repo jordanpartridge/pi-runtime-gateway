@@ -5,66 +5,70 @@ each run. The gateway starts a fresh Pi process over stdio RPC for every request
 checks its model and empty conversation, then stops and reaps it before reporting
 a terminal result.
 
-The server has no npm dependencies. It targets **Node.js 22+ on Linux and macOS**
-and checks for **Pi 0.85.1**. The default profile uses Ollama with
-`qwen3-coder-next:latest` at `http://127.0.0.1:11434`. Pi and Ollama are separate
-prerequisites; the model must be available in your Ollama installation.
+The gateway runs on your machine. Inference can use **local Ollama** or an
+explicitly selected **cloud provider through Pi**. Hooks, project context, tools,
+streaming, and cancellation use the same runtime in either case.
 
-## Get started
+## Quick start
+
+You need **Node.js 22+** and **Pi 0.85.1** on Linux or macOS. For local inference,
+have Ollama running with an installed model that supports tool calls. For cloud
+inference, have an API key and a model ID for your selected provider.
 
 ```sh
 git clone https://github.com/jordanpartridge/pi-runtime-gateway.git
 cd pi-runtime-gateway
 npm run setup
-node scripts/install.mjs
+npm start
+```
+
+No `npm install` is needed. The guided setup:
+
+1. Detects Pi and offers local Ollama or cloud inference.
+2. Lists installed Ollama models, or asks for the cloud model and a hidden API key.
+3. Lets you choose a project, saves private configuration, and checks readiness.
+
+Press Enter to try the built-in proof project first. Setup preserves existing
+configuration and downloads nothing. Cloud inference sends prompts, project
+guidance, retrieved context, and tool results to the selected provider; API usage
+may be billed. There is no automatic local-to-cloud fallback.
+
+If Pi is missing, install the pinned package using its supported npm distribution:
+
+```sh
+npm install -g --ignore-scripts @earendil-works/pi-coding-agent@0.85.1
+```
+
+Check or troubleshoot at any time:
+
+```sh
+npm run doctor
+```
+
+Doctor checks configuration, the Pi version, local state access, and Ollama model
+availability. For cloud configurations it checks that a key is configured; it
+**does not validate that key or make a paid inference request**. Follow its
+specific fixes, then run it again.
+
+The server runs in the foreground at `http://127.0.0.1:4319`. Ctrl-C cancels active
+work and reaps its Pi process. Authentication uses a generated token in
+`.runtime/token`; the address and PID are in `.runtime/server.json`.
+
+For a command available from any directory:
+
+```sh
+npm run install:local
+pi-runtime-gateway doctor
 pi-runtime-gateway
 ```
 
-`npm run setup` creates a private `.env` and `config/local.json` when missing.
-Edit `.env` for your model, Pi executable, Ollama address, port, and state
-directory; edit `config/local.json` to select projects and extensions. Setup
-preserves existing files. Both local configuration files are ignored by Git.
+The installer links `~/.local/bin/pi-runtime-gateway` to this checkout. Keep the
+checkout in place, and add `~/.local/bin` to PATH if needed. The command also accepts
+`setup` for configuration. Pi itself is resolved through PATH or `--pi-binary`.
 
-The installer creates `~/.local/bin/pi-runtime-gateway` as a symlink to this
-checkout. Keep the checkout in place. If that directory is not on your shell's
-PATH, add it for the current shell:
-
-```sh
-export PATH="$HOME/.local/bin:$PATH"
-```
-
-You can also start directly from the checkout with
-`node -- bin/pi-runtime-gateway.mjs`; no `npm install` is required. Pi is resolved as `pi` on PATH by default, including a
-version-manager shim. The configured `piVersion` is checked at startup; the
-bundled profile pins `0.85.1`. If a project selects a different version through
-its version manager, use `--pi-binary` with the intended executable path.
-
-The server listens on `http://127.0.0.1:4319`, creates a bearer token in
-`.runtime/token`, and records its address and PID in `.runtime/server.json`.
-The default `.runtime` directory is inside the checkout, regardless of the shell's
-current directory. The server runs in the foreground; Ctrl-C or SIGTERM cancels
-active work and reaps its child process before exit.
-
-Each server owns its state directory through `server.lock`; concurrent servers
-need distinct state directories. A forced termination can leave this lock behind.
-Before removing a stale lock, inspect its recorded PID and verify that no gateway
-is still using the directory. Normal shutdown and startup failure release the
-server's own lock.
-
-From another terminal in the checkout:
-
-```sh
-gateway_token="$(cat .runtime/token)"
-curl --fail-with-body http://127.0.0.1:4319/health \
-  -H "Authorization: Bearer $gateway_token"
-curl --fail-with-body http://127.0.0.1:4319/runs \
-  -H "Authorization: Bearer $gateway_token" \
-  -H 'Content-Type: application/json' \
-  --data '{"project":"proof","prompt":"Read discount.php and explain the percentage calculation."}'
-```
-
-The second request returns a run ID. Use it to fetch status, subscribe to server
-sent events, or cancel the run; see [the API guide](docs/api.md).
+The API currently uses `/runs`, status, SSE events, and cancellation. It is **not
+yet OpenAI-compatible**. See [the API guide](docs/api.md) for a complete request
+example and the bearer-token requirement.
 
 ## Configure a profile
 
@@ -102,12 +106,14 @@ required. See [extensions](docs/extensions.md) for explicit loading and receipts
 | `--state-dir` | `PI_GATEWAY_STATE_DIR` | Checkout's `.runtime` directory |
 | `--port` | `PI_GATEWAY_PORT` | `4319` |
 | `--pi-binary` | `PI_GATEWAY_PI_BINARY` | `pi` on PATH |
+| — | `PI_GATEWAY_PROVIDER` | `ollama` |
+| — | `PI_GATEWAY_API_KEY` | Unset; required for cloud |
 | — | `PI_GATEWAY_MODEL` | `qwen3-coder-next:latest` |
 | — | `PI_GATEWAY_OLLAMA_URL` | `http://127.0.0.1:11434` |
 
 Use `pi-runtime-gateway --help` for options and `--version` for the gateway version.
 Configuration precedence is CLI options, then existing environment variables,
-then `.env`, then profile defaults. The service remains bound to loopback.
+then `.env`, then the selected profile and bundled defaults. The service remains bound to loopback.
 
 The gateway reads the checkout's `.env` automatically. Select another dotenv file
 with `--env-file` or `PI_GATEWAY_ENV_FILE`. When invoking Node directly, put `--`
@@ -124,15 +130,27 @@ directory. Relative paths supplied through the existing environment or CLI resol
 against the current working directory, including the path selecting an explicit
 dotenv file. Paths inside a custom JSON profile still resolve against that profile.
 
-Setup also accepts `--model`, `--pi-binary`, `--ollama-url`, `--port`, and
-`--state-dir`; for example:
+For scripts, use `--non-interactive` with explicit configuration. Setup also
+accepts `--provider`, `--model`, `--pi-binary`, `--ollama-url`, `--project`, `--port`,
+`--state-dir`, `--install`, and `--skip-check`; for example:
 
 ```sh
-npm run setup -- --model qwen3-coder-next:latest --port 4320
+npm run setup -- --non-interactive --model qwen3-coder-next:latest --port 4320
 ```
 
 These options apply when creating missing files; they do not overwrite an existing
-`.env` or local profile.
+`.env` or local profile. Use `--interactive` to explicitly request the wizard.
+Cloud keys are accepted through the hidden prompt or `PI_GATEWAY_API_KEY`, never
+as a CLI argument. They are stored only in private dotenv configuration when
+setup creates it; generated Pi auth contains an environment reference. Gateway
+clients use a separate bearer token.
+
+The guided cloud choices are Anthropic, OpenAI, OpenRouter, Google, and xAI.
+Advanced profiles can select other Pi provider IDs with a single API key and
+built-in model catalog. Provider-specific OAuth, subscription login, and additional
+cloud settings are not handled by this setup flow. Pi owns provider protocols and
+model catalogs; the gateway does not duplicate their SDKs. Only the selected key
+is passed to a cloud worker. Ollama workers receive no cloud key.
 
 ## Execution and trust
 
@@ -159,11 +177,15 @@ npm test
 
 The offline suite uses a fake Pi RPC peer and needs no model, Pi installation, or
 external service. CI runs it on Node 22 and 24. The separate live proof exercises
-real Pi and Ollama:
+real Pi and the configured inference provider (cloud requests may be billed):
 
 ```sh
 npm run prove
 ```
+
+Live inference has been verified with local Ollama. Cloud setup, credential
+isolation, and real Pi cloud-profile initialization are tested; successful cloud
+inference with a real API key has **not** been verified in this release.
 
 Start the gateway first and consult [the proof report](evidence/proof-report.md)
 for the tested configuration, checks, and limits of the evidence. A transport

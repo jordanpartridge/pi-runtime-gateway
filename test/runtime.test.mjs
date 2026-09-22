@@ -222,3 +222,37 @@ test('event saturation fails closed and still emits a terminal SSE event and rec
   assert.equal(run.events.filter(event => event.type === 'terminal').length, 1);
   assertReaped(run);
 });
+
+
+test('only the explicitly selected cloud key reaches Pi and no key enters receipts', { timeout: 8000 }, async t => {
+  const context = fixture(t);
+  const secret = 'synthetic-private-provider-key';
+  context.runtime.workerEnv = { PI_GATEWAY_PROVIDER_API_KEY: secret, ANTHROPIC_API_KEY: 'unselected-key' };
+  const spawnProcess = context.runtime.spawnProcess;
+  let childEnv;
+  context.runtime.spawnProcess = (command, args, options) => {
+    childEnv = options.env;
+    return spawnProcess(command, args, options);
+  };
+  const run = await finished(context, start(context).id);
+  assert.equal(run.status, 'completed');
+  assert.equal(childEnv.PI_GATEWAY_PROVIDER_API_KEY, secret);
+  assert.equal(childEnv.ANTHROPIC_API_KEY, undefined);
+  assert.equal(JSON.stringify(context.runtime.snapshot(run)).includes(secret), false);
+  assert.equal(readFileSync(resolve(run.directory, 'receipt.json'), 'utf8').includes(secret), false);
+  assert.equal(readFileSync(resolve(run.directory, 'events.jsonl'), 'utf8').includes(secret), false);
+});
+
+test('Ollama workers receive no cloud credential even when the caller supplies one', { timeout: 8000 }, async t => {
+  const context = fixture(t, 'success', { provider: 'ollama' });
+  context.runtime.workerEnv = { PI_GATEWAY_PROVIDER_API_KEY: 'unselected-key' };
+  const spawnProcess = context.runtime.spawnProcess;
+  let childEnv;
+  context.runtime.spawnProcess = (command, args, options) => {
+    childEnv = options.env;
+    return spawnProcess(command, args, options);
+  };
+  const run = await finished(context, start(context).id);
+  assert.equal(run.status, 'completed');
+  assert.equal(childEnv.PI_GATEWAY_PROVIDER_API_KEY, undefined);
+});

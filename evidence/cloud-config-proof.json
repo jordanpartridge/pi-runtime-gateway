@@ -1,0 +1,11 @@
+{
+  "provedAt": "2026-09-22T04:09:06.454Z",
+  "result": "passed",
+  "piVersion": "0.85.1",
+  "provider": "anthropic",
+  "model": "claude-sonnet-4-5",
+  "initialMessageCount": 0,
+  "authIsEnvironmentReference": true,
+  "promptSubmitted": false,
+  "cloudInferenceTested": false
+}

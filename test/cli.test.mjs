@@ -153,3 +153,14 @@ test('symlink launch keeps --env-file in the CLI and resolves the repository roo
   assert.equal(invocation.root, fixture.directory);
   assert.equal(invocation.env.PI_GATEWAY_ENV_FILE, resolve(fixture.directory, 'runtime.env'));
 });
+
+
+test('CLI invalid-credential diagnostics never echo secret argument values', t => {
+  const fixture = cliFixture(t);
+  const secret = 'synthetic-private-key';
+  for (const args of [[`--api-key=${secret}`], ['--api-key', secret], [`--unknown=${secret}`], [secret]]) {
+    const result = run(fixture.cli, args);
+    assert.notEqual(result.status, 0);
+    assert.equal((result.stdout + result.stderr).includes(secret), false);
+  }
+});

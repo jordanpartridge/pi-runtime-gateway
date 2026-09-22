@@ -5,9 +5,13 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const root = resolve(dirname(realpathSync(fileURLToPath(import.meta.url))), '..');
-const help = `Usage: pi-runtime-gateway [options]
+const help = `Usage: pi-runtime-gateway [setup|doctor] [options]
 
-Start the local Pi runtime HTTP gateway.
+Start the local Pi runtime HTTP gateway, or configure/check its prerequisites.
+
+Commands:
+  setup               Guided first-run configuration
+  doctor              Check configuration, Pi, and selected inference backend
 
 Options:
   --env-file PATH     Environment file (PI_GATEWAY_ENV_FILE)
@@ -33,6 +37,20 @@ function expandHome(value) {
 }
 
 async function main() {
+  const command = process.argv[2];
+  if (command === 'setup') {
+    const { setup } = await import('../scripts/setup.mjs');
+    const result = await setup({ args: process.argv.slice(3) });
+    if (result?.ready === false) process.exitCode = 1;
+    return;
+  }
+  if (command === 'doctor') {
+    if (process.argv.length > 3) throw new Error('doctor reads configuration from the environment; it accepts no CLI flags.');
+    const { main } = await import('../scripts/doctor.mjs');
+    const result = await main({ root, env: process.env });
+    if (!result.ok) process.exitCode = 1;
+    return;
+  }
   const env = { ...process.env };
   let action;
   const args = process.argv.slice(2);
@@ -46,7 +64,10 @@ async function main() {
     const separator = argument.indexOf('=');
     const flag = separator < 0 ? argument : argument.slice(0, separator);
     const variable = variables.get(flag);
-    if (!variable) throw new Error(`Unknown option: ${argument}`);
+    if (!variable) {
+      if (flag === '--api-key') throw new Error('API keys are not accepted on the command line. Use setup or PI_GATEWAY_API_KEY.');
+      throw new Error(`Unknown option: ${flag.startsWith('--') ? flag : '(positional argument)'}`);
+    }
     const value = separator < 0 ? args[++index] : argument.slice(separator + 1);
     if (value === undefined || value === '' || (separator < 0 && value.startsWith('--')))
       throw new Error(`${flag} requires a value.`);

@@ -7,8 +7,8 @@ import { execFileSync } from 'node:child_process';
 import { Runtime, TERMINAL } from './lib/runtime.mjs';
 import { loadProfile, prepareAgent } from './lib/config.mjs';
 
-export function createGateway({ root, profile, stateDir, token, runtime } = {}) {
-  runtime ||= new Runtime({ root, profile, stateDir });
+export function createGateway({ root, profile, stateDir, token, runtime, workerEnv = {} } = {}) {
+  runtime ||= new Runtime({ root, profile, stateDir, workerEnv });
   const digest = value => createHash('sha256').update(value).digest();
   const tokenDigest = digest(`Bearer ${token}`);
   const connections = new Set();
@@ -108,8 +108,11 @@ function acquireStateLock(stateDir) {
 export async function startServer({ root = dirname(fileURLToPath(import.meta.url)), env = process.env } = {}) {
   if (process.platform === 'win32') throw new Error('This release requires Linux or macOS process-group support.');
   const config = loadProfile({ root, env });
+  const versionEnv = Object.fromEntries(['HOME', 'PATH', 'LANG', 'TMPDIR']
+    .flatMap(key => typeof (env[key] ?? process.env[key]) === 'string' ? [[key, env[key] ?? process.env[key]]] : []));
   let version;
-  try { version = execFileSync(config.profile.piBinary, ['--version'], { encoding: 'utf8', timeout: 5000 }).trim(); }
+  try { version = execFileSync(config.profile.piBinary, ['--version'], { encoding: 'utf8', timeout: 5000,
+    env: versionEnv, stdio: ['ignore', 'pipe', 'pipe'] }).trim(); }
   catch { throw new Error('Pi executable unavailable. Install Pi and set PI_GATEWAY_PI_BINARY or add pi to PATH.'); }
   if (version !== config.profile.piVersion) throw new Error(`Pi version mismatch: this profile requires ${config.profile.piVersion}.`);
   const { stateDir, port } = config;
@@ -123,7 +126,7 @@ export async function startServer({ root = dirname(fileURLToPath(import.meta.url
     chmodSync(tokenPath, 0o600);
     const token = readFileSync(tokenPath, 'utf8').trim();
     if (token.length < 32) throw new Error('Gateway token is too short.');
-    gateway = createGateway({ root, profile, stateDir, token });
+    gateway = createGateway({ root, profile, stateDir, token, workerEnv: config.workerEnv });
     const originalClose = gateway.close.bind(gateway);
     let closePromise, stop;
     gateway.close = () => {
