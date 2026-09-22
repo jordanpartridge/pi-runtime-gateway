@@ -19,6 +19,7 @@
     "install:local": "node scripts/install.mjs",
     "test": "node --test test/*.test.mjs",
     "prove": "node scripts/prove.mjs",
+    "prove:openai": "node scripts/prove-openai.mjs",
     "doctor": "node scripts/doctor.mjs"
   },
   "engines": {

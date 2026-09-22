@@ -1,8 +1,11 @@
+import chatBridge from './chat.ts';
 import { appendFileSync, readFileSync, realpathSync } from 'node:fs';
 import { resolve, relative, isAbsolute, dirname } from 'node:path';
 import { createHash } from 'node:crypto';
 
 const auditPath = process.env.PI_GATEWAY_AUDIT!;
+const clientTools = process.env.PI_GATEWAY_CHAT_FILE
+  ? JSON.parse(readFileSync(process.env.PI_GATEWAY_CHAT_FILE, 'utf8')).clientTools === true : false;
 const root = realpathSync(process.env.PI_GATEWAY_PROJECT!);
 const skillPath = realpathSync(process.env.PI_GATEWAY_SKILL!);
 const hash = (text: string) => createHash('sha256').update(text).digest('hex');
@@ -89,6 +92,7 @@ export default async function harness(pi: any, extensions: { name: string; facto
     audit('runtime.after_provider_response', { status: event.status });
   });
   pi.on('tool_call', (event: any) => {
+    if (clientTools) return; // The chat bridge blocks and terminates every client-owned call.
     const allowed = ['read', 'grep', 'find', 'ls'];
     let permitted = allowed.includes(event.toolName);
     const requested = resolve(root, String(event.input?.path || '.'));
@@ -102,4 +106,5 @@ export default async function harness(pi: any, extensions: { name: string; facto
     audit('runtime.tool_call', { tool: event.toolName, permitted });
     if (!permitted) return { block: true, reason: 'Read-only tools are restricted to the configured project.' };
   });
+  await chatBridge(pi);
 }

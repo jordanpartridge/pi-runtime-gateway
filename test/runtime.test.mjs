@@ -171,7 +171,7 @@ test('HTTP requires bearer auth, refuses browser origins, validates projects, an
   assert.equal((await context.request('/health', { headers: { origin: 'http://localhost:8000' } })).status, 403);
   const health = await context.request('/health');
   assert.equal(health.status, 200);
-  assert.equal((await health.json()).openaiCompatible, false);
+  assert.equal((await health.json()).openaiCompatible, true);
   const unknownProject = await context.request('/runs', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ prompt: 'Review.', project: '../unconfigured' }) });
   assert.equal(unknownProject.status, 400);
   assert.equal(context.runtime.runs.size, 0, 'invalid requests must not spawn a worker');
@@ -255,4 +255,106 @@ test('Ollama workers receive no cloud credential even when the caller supplies o
   const run = await finished(context, start(context).id);
   assert.equal(run.status, 'completed');
   assert.equal(childEnv.PI_GATEWAY_PROVIDER_API_KEY, undefined);
+});
+
+
+const chatBody = (context, extra = {}) => ({ model: context.profile.model,
+  messages: [{ role: 'user', content: [{ type: 'text', text: 'Review the fixture.' }] }], ...extra });
+const submitChat = (context, body) => context.request('/v1/chat/completions', {
+  method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+const clientTool = { type: 'function', function: { name: 'lookup_status', description: 'Get issue status',
+  parameters: { type: 'object', properties: { issue: { type: 'integer' } }, required: ['issue'] } } };
+
+test('OpenAI routes authenticate, expose only configured models, and reject unsupported controls before spawning', async t => {
+  const c = await serve(fixture(t));
+  const unauth = await fetch(c.url + '/v1/models');
+  assert.equal(unauth.status, 401);
+  assert.equal(typeof (await unauth.json()).error.message, 'string');
+  const models = await (await c.request('/v1/models')).json();
+  assert.equal(models.object, 'list');
+  assert.deepEqual(models.data.map(m => m.id), ['offline-reviewer/fixture']);
+  for (const extra of [{ model: 'unconfigured' }, { temperature: 0.5 }, { n: 2 }, { tools: [{ type: 'web_search' }] }]) {
+    const response = await submitChat(c, chatBody(c, extra));
+    assert.equal(response.status, 400);
+    assert.equal((await response.json()).error.type, 'invalid_request_error');
+  }
+  assert.equal(c.runtime.runs.size, 0);
+  const missing = await c.request('/v1/responses');
+  assert.equal(missing.status, 404);
+  assert.equal(typeof (await missing.json()).error.message, 'string');
+});
+
+test('OpenAI completion waits for reaping and returns only final answer and aggregated usage', async t => {
+  const c = await serve(fixture(t, 'internal-tool'));
+  const response = await submitChat(c, chatBody(c));
+  assert.equal(response.status, 200);
+  const result = await response.json();
+  assert.equal(result.object, 'chat.completion');
+  assert.equal(result.choices[0].message.content, expectedText);
+  assert.equal(result.choices[0].finish_reason, 'stop');
+  assert.deepEqual(result.usage, { prompt_tokens: 33, completion_tokens: 13, total_tokens: 46 });
+  assertReaped([...c.runtime.runs.values()][0]);
+});
+
+test('OpenAI SSE has standard deltas, requested usage and DONE with no Pi internal events', async t => {
+  const c = await serve(fixture(t, 'internal-tool'));
+  const response = await submitChat(c, chatBody(c, { stream: true, stream_options: { include_usage: true } }));
+  assert.equal(response.status, 200);
+  const stream = await response.text();
+  assert.equal(stream.includes('Private internal narration'), false);
+  assert.equal(stream.includes('runtime.before_provider_request'), false);
+  assert.equal(stream.includes('data: [DONE]'), true);
+  const chunks = stream.split('\n').filter(line => line.startsWith('data: ') && !line.includes('[DONE]')).map(line => JSON.parse(line.slice(6)));
+  assert.equal(chunks.filter(c => c.choices.length).map(c => c.choices[0].delta.content || '').join(''), expectedText);
+  assert.equal(chunks.at(-1).choices.length, 0);
+  assert.equal(chunks.at(-1).usage.total_tokens, 46);
+  assert.equal(chunks.at(-2).choices[0].finish_reason, 'stop');
+  assert.equal(c.runtime.listenerCount('event'), 0);
+});
+
+test('OpenAI client tool calls complete with no text and support structured tool-result history', async t => {
+  const c = await serve(fixture(t, 'client-tool'));
+  const body = chatBody(c, { tools: [clientTool] });
+  const response = await submitChat(c, body);
+  assert.equal(response.status, 200);
+  const result = await response.json();
+  assert.equal(result.choices[0].finish_reason, 'tool_calls');
+  assert.equal(result.choices[0].message.content, null);
+  const call = result.choices[0].message.tool_calls[0];
+  assert.deepEqual(JSON.parse(call.function.arguments), { issue: 42 });
+  assert.equal(call.function.name, 'lookup_status');
+  assertReaped([...c.runtime.runs.values()][0]);
+  const continuation = await submitChat(c, { ...body, messages: [...body.messages, result.choices[0].message,
+    { role: 'tool', tool_call_id: call.id, content: 'closed' }] });
+  assert.equal(continuation.status, 200);
+  await continuation.json();
+  const second = [...c.runtime.runs.values()][1];
+  assert.equal(second.initialMessageCount, 0);
+  assert.equal(commands(second).find(e => e.type === 'chat_fixture').chat.messages.at(-1).content, 'closed');
+});
+
+for (const scenario of ['provider-error', 'missing-chat-hook']) {
+  test(`OpenAI ${scenario} cannot masquerade as a successful completion`, async t => {
+    const c = await serve(fixture(t, scenario));
+    const response = await submitChat(c, chatBody(c));
+    assert.equal(response.status, 502);
+    assert.equal(typeof (await response.json()).error.message, 'string');
+    assertReaped([...c.runtime.runs.values()][0]);
+  });
+}
+
+test('disconnecting an OpenAI stream cancels and reaps its worker', async t => {
+  const c = await serve(fixture(t, 'stall'));
+  const controller = new AbortController();
+  const pending = fetch(c.url + '/v1/chat/completions', { method: 'POST', signal: controller.signal,
+    headers: { authorization: `Bearer ${c.token}`, 'content-type': 'application/json' },
+    body: JSON.stringify(chatBody(c, { stream: true })) });
+  const rejected = assert.rejects(pending, error => error.name === 'AbortError');
+  await until(() => c.runtime.runs.size === 1, 'chat request accepted');
+  controller.abort();
+  await rejected;
+  const run = [...c.runtime.runs.values()][0];
+  await finished(c, run.id);
+  assert.equal(run.status, 'cancelled');
+  assertReaped(run);
 });

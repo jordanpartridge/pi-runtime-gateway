@@ -14,7 +14,9 @@ different state directories for concurrent instances; remove a stale lock only
 after verifying that its recorded owner has stopped and the directory is unused.
 
 Clients choose project keys, not arbitrary working directories, providers,
-models, or tools. Workers start with fresh conversations and an isolated Pi agent
+or inference models. Chat clients can supply function schemas; these are handed
+back for client execution, and replace the active Pi tool set for that request.
+The gateway never executes client functions. Workers start with fresh conversations and an isolated Pi agent
 directory. Automatic global discovery is disabled; the gateway explicitly loads
 its profile, project guidance, skill, and configured extensions.
 
@@ -38,7 +40,7 @@ an external action.
 
 Keep the state directory, token, `.env`, and private local profiles out of version
 control. Setup creates `.env` with mode `0600` and preserves existing files. The
-gateway parses dotenv as data; it does not source or evaluate shell code. Run output, project
+gateway parses dotenv as data; it does not source or evaluate shell code. Saved chat inputs, run output, project
 guidance, and extension audit data may contain sensitive project information.
 Review and redact receipts before publishing them. Stderr is represented by
 hash/size metadata rather than raw content, but that does not make other receipts
