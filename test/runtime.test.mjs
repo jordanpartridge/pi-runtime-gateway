@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { setTimeout as delay } from 'node:timers/promises';
+import { createHash } from 'node:crypto';
 import { Runtime, TERMINAL } from '../lib/runtime.mjs';
 import { createGateway } from '../server.mjs';
 
@@ -112,6 +113,35 @@ test('streaming preserves multibyte UTF-8 split across stdout chunks', { timeout
   assert.equal(run.text, expectedText);
   assert.deepEqual(run.events.filter(event => event.type === 'text_delta').map(event => event.text), ['Review: ', 'Café 👋', ' is clear.']);
   assert.equal(run.status, 'completed');
+});
+
+test('a complete invalid audit line advances the cursor, records the error, and does not hide later hooks', { timeout: 8000 }, async t => {
+  const context = fixture(t, 'invalid-audit');
+  const run = await finished(context, start(context).id);
+  assert.equal(run.status, 'failed');
+  assert.equal(run.error, 'invalid_audit_json');
+  assert.equal(run.auditLines, 2);
+  assert.equal(run.auditErrorCount, 1);
+  assert.equal(run.auditErrorLine, 1);
+  assert.ok(run.hooks.some(hook => hook.hook === 'runtime.before_provider_request'));
+  assert.deepEqual(run.events.filter(event => event.type === 'audit_error').map(event =>
+    ({ error: event.error, line: event.line })), [{ error: 'invalid_audit_json', line: 1 }]);
+  context.runtime.collectAudit(run);
+  assert.equal(run.auditLines, 2);
+  assert.equal(run.auditErrorCount, 1);
+});
+
+test('receipt hashes the complete stderr stream without storing its contents', { timeout: 8000 }, async t => {
+  const context = fixture(t, 'stderr-chunks');
+  const run = await finished(context, start(context).id);
+  const stderr = 'first stderr chunk\nsecond stderr chunk\n';
+  const receiptText = readFileSync(resolve(run.directory, 'receipt.json'), 'utf8');
+  const receipt = JSON.parse(receiptText);
+  assert.equal(receipt.status, 'completed');
+  assert.equal(receipt.stderrBytes, Buffer.byteLength(stderr));
+  assert.equal(receipt.stderrSha256, createHash('sha256').update(stderr).digest('hex'));
+  assert.equal(receiptText.includes('first stderr chunk'), false);
+  assert.equal(receiptText.includes('second stderr chunk'), false);
 });
 
 for (const [scenario, error] of [['wrong-model', 'unexpected_model'], ['wrong-provider', 'unexpected_model'], ['stale-session', 'session_not_fresh']]) {
