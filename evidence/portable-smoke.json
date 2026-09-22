@@ -1,0 +1,72 @@
+{
+  "provedAt": "2026-09-22T03:55:09.503Z",
+  "result": "passed",
+  "launch": "Installed ~/.local/bin/pi-runtime-gateway from /tmp",
+  "extensions": [],
+  "restartWithPiEmptyAuth": true,
+  "stateLockReleased": true,
+  "health": {
+    "status": "ready",
+    "profile": "portable-vanilla",
+    "provider": "ollama",
+    "model": "qwen3-coder-next:48k",
+    "transport": "pi-stdio-rpc",
+    "openaiCompatible": false,
+    "projects": [
+      "proof"
+    ],
+    "piVersion": "0.85.1",
+    "extensions": []
+  },
+  "receipt": {
+    "id": "2d1be250-d690-4dab-b567-b92f6970b15c",
+    "project": "proof",
+    "status": "completed",
+    "startedAt": "2026-09-22T03:55:07.471Z",
+    "finishedAt": "2026-09-22T03:55:09.495Z",
+    "profile": "portable-vanilla",
+    "provider": "ollama",
+    "model": "qwen3-coder-next:48k",
+    "pid": 268657,
+    "sessionId": "01a0c740-cc18-7679-9374-20d9876f1c02",
+    "initialMessageCount": 0,
+    "text": "PI_GATEWAY_CONTEXT_READY",
+    "error": null,
+    "stopReason": "stop",
+    "childExited": true,
+    "exitCode": 143,
+    "exitSignal": null,
+    "hooks": [
+      {
+        "at": "2026-09-22T03:55:07.710Z",
+        "hook": "runtime.session_start",
+        "provider": "ollama",
+        "model": "qwen3-coder-next:48k"
+      },
+      {
+        "at": "2026-09-22T03:55:07.715Z",
+        "hook": "runtime.before_agent_start",
+        "contextSha256": "2ccac23a91086fe2efaa00612f43fffd00932b6718de647205cb456232840d70",
+        "skillSha256": "1f3ba82c0c8a91ed42a13eea9877dcff99d38e011c190799029e60c6c803d1c8",
+        "skillNames": [
+          "review-evidence"
+        ],
+        "projectContextLoaded": true
+      },
+      {
+        "at": "2026-09-22T03:55:07.724Z",
+        "hook": "runtime.before_provider_request",
+        "provider": "ollama",
+        "model": "qwen3-coder-next:48k",
+        "projectContextPresent": true,
+        "reviewSkillPresent": true,
+        "payloadSha256": "ab5a30f26e2d9aa4ca52af1de4f196567f9030def864cba7edf62e1850dda9ca"
+      },
+      {
+        "at": "2026-09-22T03:55:09.397Z",
+        "hook": "runtime.after_provider_response",
+        "status": 200
+      }
+    ]
+  }
+}

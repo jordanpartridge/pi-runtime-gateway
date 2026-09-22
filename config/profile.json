@@ -1,0 +1,21 @@
+{
+  "id": "pi-runtime-local",
+  "piBinary": "pi",
+  "piVersion": "0.85.1",
+  "provider": "ollama",
+  "model": "qwen3-coder-next:latest",
+  "ollamaUrl": "http://127.0.0.1:11434",
+  "contextWindow": 48000,
+  "maxTokens": 4096,
+  "extension": "profile/harness.ts",
+  "systemPrompt": "profile/reviewer.md",
+  "skill": "profile/review-skill/SKILL.md",
+  "extensions": [],
+  "projects": { "proof": "fixtures/review-project" },
+  "projectContextFile": "AGENTS.md",
+  "tools": ["read", "grep", "find", "ls"],
+  "startupTimeoutMs": 20000,
+  "runTimeoutMs": 300000,
+  "cancelGraceMs": 3000,
+  "maxRuns": 30
+}

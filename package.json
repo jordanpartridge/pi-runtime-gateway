@@ -1,0 +1,26 @@
+{
+  "name": "pi-runtime-gateway",
+  "version": "0.1.0",
+  "description": "A local HTTP runtime for disposable Pi coding-agent sessions with explicit profiles, streaming, and cancellation.",
+  "private": true,
+  "license": "MIT",
+  "author": "Jordan Partridge",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jordanpartridge/pi-runtime-gateway.git"
+  },
+  "type": "module",
+  "bin": {
+    "pi-runtime-gateway": "bin/pi-runtime-gateway.mjs"
+  },
+  "scripts": {
+    "start": "node -- bin/pi-runtime-gateway.mjs",
+    "setup": "node scripts/setup.mjs",
+    "install:local": "node scripts/install.mjs",
+    "test": "node --test test/*.test.mjs",
+    "prove": "node scripts/prove.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

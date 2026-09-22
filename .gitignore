@@ -1,0 +1,10 @@
+.runtime/
+.env
+.env.*
+!.env.example
+config/local.json
+config/*.local.json
+config/agent/auth.json
+config/agent/models-store.json
+node_modules/
+*.log

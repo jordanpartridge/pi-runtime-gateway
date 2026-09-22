@@ -1,0 +1,23 @@
+{
+  ".env.example": "5c92c72b6ddfef65861eb025e4fa938fa48470c11ad4f4592f3b169c9d762a34",
+  "bin/pi-runtime-gateway.mjs": "c0d4f307e74dd29450a92121c5b4f8855b1a521509c03b7e1ad9e0b4ca1fa357",
+  "config/profile.json": "41f4aacb1fa73a152e8d6e0b4989ba6141ea0af9cb8dd598986df29366fefc8a",
+  "fixtures/review-project/AGENTS.md": "2ccac23a91086fe2efaa00612f43fffd00932b6718de647205cb456232840d70",
+  "fixtures/review-project/discount.php": "5d20d8ff79d88915e8a69971d927c26ffc7a6da4651f554c999421ad14aae025",
+  "lib/config.mjs": "9ade9f16a935699ee2503c217b563aa37abca072ef3f30b830de066f16b41b4c",
+  "lib/runtime.mjs": "f42d513b3c80db368917966723e9d89a24ffcbaa80b88c6a16d98dbea2419f43",
+  "package.json": "90e4de59bb03b9f5ee4567ebaae2c37390549268eda7a370d459b59571a5d0ee",
+  "profile/harness.ts": "a4255302dcd00ee77527b34164cc0e73777bf84b55a65d992a17b7124fb03408",
+  "profile/review-skill/SKILL.md": "1f3ba82c0c8a91ed42a13eea9877dcff99d38e011c190799029e60c6c803d1c8",
+  "profile/reviewer.md": "90c2990416e43c16dd8d02baea37d70fde90a5185af6edec4382490322e5bb74",
+  "scripts/install.mjs": "da4e076df76e4422e49aeafab958b12796530a6dac729d9f81af6dbc0269ca04",
+  "scripts/prove.mjs": "3075ee07808bd97bb653257d470207189f58e603c909cdaf95eb52effccb6435",
+  "scripts/setup.mjs": "42f3cde83cad433b51a9d449d0507f18928ee741892aa90111f3d22a4c0acb94",
+  "server.mjs": "540a4ad7362f5cf5b721117464c9193bc4d2550de4cacf27fc25ffc5d7afaaab",
+  "test/cli.test.mjs": "d3d3a78a121c69bdec5bdb456905514a795a870b387965e80b56e15e6f8ab597",
+  "test/config.test.mjs": "7bc250dbbdac57bf807bf862fcea151a5cf78034ab2b030545602604538b4bfb",
+  "test/fixtures/fake-pi.mjs": "c5435e8bf306a1c05b874dd38d8549dc6f2b51eee771a8509b42e5be1fa4133c",
+  "test/runtime.test.mjs": "21423ac275500f94d34ee971b64783e7a68aed1e52b1dd078d9c0207060f272f",
+  "test/server-start.test.mjs": "836fbb607827aed8b5bf2f91bf66f2eec0564ee22d2199de49829e9a881eb4a1",
+  "test/setup.test.mjs": "09bd98a17f99aa3c02a9a49ad66c6c917e0682478941547b47ebd1751213b47c"
+}

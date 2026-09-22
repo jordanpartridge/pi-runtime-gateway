@@ -1,0 +1,2183 @@
+{
+  "provedAt": "2026-09-22T03:54:42.028Z",
+  "result": "passed",
+  "profile": "piper-local-reviewer-v1",
+  "model": "qwen3-coder-next:48k",
+  "extensions": [
+    "jit-retrieve",
+    "jev-advisor"
+  ],
+  "checks": [
+    {
+      "name": "Explicit local profile",
+      "passed": true,
+      "detail": {
+        "status": "ready",
+        "profile": "piper-local-reviewer-v1",
+        "provider": "ollama",
+        "model": "qwen3-coder-next:48k",
+        "transport": "pi-stdio-rpc",
+        "openaiCompatible": false,
+        "projects": [
+          "proof"
+        ],
+        "piVersion": "0.85.1",
+        "extensions": [
+          "jit-retrieve",
+          "jev-advisor"
+        ]
+      }
+    },
+    {
+      "name": "SSE delivered terminal event",
+      "passed": true,
+      "detail": "21bebb6e-6d89-4063-8f89-d007374b77a1"
+    },
+    {
+      "name": "Pi child was reaped",
+      "passed": true,
+      "detail": "21bebb6e-6d89-4063-8f89-d007374b77a1"
+    },
+    {
+      "name": "Local model completed",
+      "passed": true,
+      "detail": "completed"
+    },
+    {
+      "name": "Actual text arrived through SSE",
+      "passed": true,
+      "detail": "21bebb6e-6d89-4063-8f89-d007374b77a1"
+    },
+    {
+      "name": "Model used context injected by hook",
+      "passed": true,
+      "detail": "PI_GATEWAY_CONTEXT_READY"
+    },
+    {
+      "name": "Hook executed: runtime.session_start",
+      "passed": true,
+      "detail": "21bebb6e-6d89-4063-8f89-d007374b77a1"
+    },
+    {
+      "name": "Hook executed: runtime.before_agent_start",
+      "passed": true,
+      "detail": "21bebb6e-6d89-4063-8f89-d007374b77a1"
+    },
+    {
+      "name": "Hook executed: runtime.before_provider_request",
+      "passed": true,
+      "detail": "21bebb6e-6d89-4063-8f89-d007374b77a1"
+    },
+    {
+      "name": "Optional extension loaded: jit-retrieve",
+      "passed": true,
+      "detail": "jit-retrieve"
+    },
+    {
+      "name": "Optional extension loaded: jev-advisor",
+      "passed": true,
+      "detail": "jev-advisor"
+    },
+    {
+      "name": "Context present in actual provider payload",
+      "passed": true,
+      "detail": {
+        "at": "2026-09-22T03:54:24.945Z",
+        "hook": "runtime.before_provider_request",
+        "provider": "ollama",
+        "model": "qwen3-coder-next:48k",
+        "projectContextPresent": true,
+        "reviewSkillPresent": true,
+        "payloadSha256": "1dfed002005d9fbd2312aff8ed6a6bc93d4481edf20ebaae86d34a84bf354db7"
+      }
+    },
+    {
+      "name": "Full review skill present in actual provider payload",
+      "passed": true,
+      "detail": {
+        "at": "2026-09-22T03:54:24.945Z",
+        "hook": "runtime.before_provider_request",
+        "provider": "ollama",
+        "model": "qwen3-coder-next:48k",
+        "projectContextPresent": true,
+        "reviewSkillPresent": true,
+        "payloadSha256": "1dfed002005d9fbd2312aff8ed6a6bc93d4481edf20ebaae86d34a84bf354db7"
+      }
+    },
+    {
+      "name": "SSE delivered terminal event",
+      "passed": true,
+      "detail": "3ebfbfb8-ee8a-405c-bb4c-56257701a543"
+    },
+    {
+      "name": "Pi child was reaped",
+      "passed": true,
+      "detail": "3ebfbfb8-ee8a-405c-bb4c-56257701a543"
+    },
+    {
+      "name": "Local model completed",
+      "passed": true,
+      "detail": "completed"
+    },
+    {
+      "name": "Actual text arrived through SSE",
+      "passed": true,
+      "detail": "3ebfbfb8-ee8a-405c-bb4c-56257701a543"
+    },
+    {
+      "name": "Fresh context for each review",
+      "passed": true,
+      "detail": {
+        "first": "01a0c740-1db3-7566-81f7-e9169e90b445",
+        "second": "01a0c740-2cf5-747e-8e18-d26e6f7f442b"
+      }
+    },
+    {
+      "name": "Read tool actually executed",
+      "passed": true,
+      "detail": "3ebfbfb8-ee8a-405c-bb4c-56257701a543"
+    },
+    {
+      "name": "Review identified concrete defect",
+      "passed": true,
+      "detail": "- **Arithmetic bug**: The function subtracts `$percent` (10) as a raw value instead of computing `subtotal * (1 - percent/100)`.\n- **Actual total returned**: `200 - 10 = 190`\n- **Intended total (10% discount on 200)**: `200 * (1 - 10/100) = 200 * 0.9 = 180`\n\nSo the function returns **190**, but the correct discounted total should be **180**."
+    },
+    {
+      "name": "SSE delivered terminal event",
+      "passed": true,
+      "detail": "78e318a8-bbcb-47de-a256-70ab8072c142"
+    },
+    {
+      "name": "Pi child was reaped",
+      "passed": true,
+      "detail": "78e318a8-bbcb-47de-a256-70ab8072c142"
+    },
+    {
+      "name": "Cancelled after actual streamed model output",
+      "passed": true,
+      "detail": "78e318a8-bbcb-47de-a256-70ab8072c142"
+    },
+    {
+      "name": "RPC abort acknowledged",
+      "passed": true,
+      "detail": "78e318a8-bbcb-47de-a256-70ab8072c142"
+    },
+    {
+      "name": "Cancelled terminal state",
+      "passed": true,
+      "detail": "cancelled"
+    },
+    {
+      "name": "Cancellation and reap within five seconds",
+      "passed": true,
+      "detail": 16
+    },
+    {
+      "name": "SSE delivered terminal event",
+      "passed": true,
+      "detail": "8bf6aca9-651f-4a2a-a76d-044c7b4d79f6"
+    },
+    {
+      "name": "Pi child was reaped",
+      "passed": true,
+      "detail": "8bf6aca9-651f-4a2a-a76d-044c7b4d79f6"
+    },
+    {
+      "name": "Local model completed",
+      "passed": true,
+      "detail": "completed"
+    },
+    {
+      "name": "Actual text arrived through SSE",
+      "passed": true,
+      "detail": "8bf6aca9-651f-4a2a-a76d-044c7b4d79f6"
+    },
+    {
+      "name": "Server accepts fresh work after cancellation",
+      "passed": true,
+      "detail": "RECOVERY_OK"
+    }
+  ],
+  "runs": [
+    {
+      "receipt": {
+        "id": "21bebb6e-6d89-4063-8f89-d007374b77a1",
+        "project": "proof",
+        "status": "completed",
+        "startedAt": "2026-09-22T03:54:22.805Z",
+        "finishedAt": "2026-09-22T03:54:26.724Z",
+        "profile": "piper-local-reviewer-v1",
+        "provider": "ollama",
+        "model": "qwen3-coder-next:48k",
+        "pid": 266821,
+        "sessionId": "01a0c740-1db3-7566-81f7-e9169e90b445",
+        "initialMessageCount": 0,
+        "text": "PI_GATEWAY_CONTEXT_READY",
+        "error": null,
+        "stopReason": "stop",
+        "childExited": true,
+        "exitCode": 143,
+        "exitSignal": null,
+        "hooks": [
+          {
+            "at": "2026-09-22T03:54:23.102Z",
+            "hook": "registered",
+            "extension": "jit-retrieve",
+            "event": "session_start"
+          },
+          {
+            "at": "2026-09-22T03:54:23.102Z",
+            "hook": "registered",
+            "extension": "jit-retrieve",
+            "event": "before_agent_start"
+          },
+          {
+            "at": "2026-09-22T03:54:23.102Z",
+            "hook": "extension.loaded",
+            "extension": "jit-retrieve"
+          },
+          {
+            "at": "2026-09-22T03:54:23.102Z",
+            "hook": "registered",
+            "extension": "jev-advisor",
+            "event": "session_start"
+          },
+          {
+            "at": "2026-09-22T03:54:23.102Z",
+            "hook": "registered",
+            "extension": "jev-advisor",
+            "event": "tool_execution_end"
+          },
+          {
+            "at": "2026-09-22T03:54:23.102Z",
+            "hook": "extension.loaded",
+            "extension": "jev-advisor"
+          },
+          {
+            "at": "2026-09-22T03:54:23.122Z",
+            "hook": "jit-retrieve.session_start.start"
+          },
+          {
+            "at": "2026-09-22T03:54:23.123Z",
+            "hook": "jit-retrieve.session_start.end",
+            "contextChanged": false,
+            "toolFailed": false
+          },
+          {
+            "at": "2026-09-22T03:54:23.123Z",
+            "hook": "jev-advisor.session_start.start"
+          },
+          {
+            "at": "2026-09-22T03:54:23.123Z",
+            "hook": "jev-advisor.session_start.end",
+            "contextChanged": false,
+            "toolFailed": false
+          },
+          {
+            "at": "2026-09-22T03:54:23.123Z",
+            "hook": "runtime.session_start",
+            "provider": "ollama",
+            "model": "qwen3-coder-next:48k"
+          },
+          {
+            "at": "2026-09-22T03:54:23.128Z",
+            "hook": "jit-retrieve.before_agent_start.start"
+          },
+          {
+            "at": "2026-09-22T03:54:24.934Z",
+            "hook": "jit-retrieve.before_agent_start.end",
+            "contextChanged": false,
+            "toolFailed": false
+          },
+          {
+            "at": "2026-09-22T03:54:24.934Z",
+            "hook": "runtime.before_agent_start",
+            "contextSha256": "2ccac23a91086fe2efaa00612f43fffd00932b6718de647205cb456232840d70",
+            "skillSha256": "1f3ba82c0c8a91ed42a13eea9877dcff99d38e011c190799029e60c6c803d1c8",
+            "skillNames": [
+              "review-evidence"
+            ],
+            "projectContextLoaded": true
+          },
+          {
+            "at": "2026-09-22T03:54:24.945Z",
+            "hook": "runtime.before_provider_request",
+            "provider": "ollama",
+            "model": "qwen3-coder-next:48k",
+            "projectContextPresent": true,
+            "reviewSkillPresent": true,
+            "payloadSha256": "1dfed002005d9fbd2312aff8ed6a6bc93d4481edf20ebaae86d34a84bf354db7"
+          },
+          {
+            "at": "2026-09-22T03:54:26.623Z",
+            "hook": "runtime.after_provider_response",
+            "status": 200
+          }
+        ]
+      },
+      "events": [
+        {
+          "seq": 1,
+          "at": "2026-09-22T03:54:22.805Z",
+          "type": "status",
+          "status": "starting"
+        },
+        {
+          "seq": 2,
+          "at": "2026-09-22T03:54:23.102Z",
+          "type": "hook",
+          "hook": "registered",
+          "extension": "jit-retrieve",
+          "event": "session_start"
+        },
+        {
+          "seq": 3,
+          "at": "2026-09-22T03:54:23.102Z",
+          "type": "hook",
+          "hook": "registered",
+          "extension": "jit-retrieve",
+          "event": "before_agent_start"
+        },
+        {
+          "seq": 4,
+          "at": "2026-09-22T03:54:23.102Z",
+          "type": "hook",
+          "hook": "extension.loaded",
+          "extension": "jit-retrieve"
+        },
+        {
+          "seq": 5,
+          "at": "2026-09-22T03:54:23.102Z",
+          "type": "hook",
+          "hook": "registered",
+          "extension": "jev-advisor",
+          "event": "session_start"
+        },
+        {
+          "seq": 6,
+          "at": "2026-09-22T03:54:23.102Z",
+          "type": "hook",
+          "hook": "registered",
+          "extension": "jev-advisor",
+          "event": "tool_execution_end"
+        },
+        {
+          "seq": 7,
+          "at": "2026-09-22T03:54:23.102Z",
+          "type": "hook",
+          "hook": "extension.loaded",
+          "extension": "jev-advisor"
+        },
+        {
+          "seq": 8,
+          "at": "2026-09-22T03:54:23.122Z",
+          "type": "hook",
+          "hook": "jit-retrieve.session_start.start"
+        },
+        {
+          "seq": 9,
+          "at": "2026-09-22T03:54:23.123Z",
+          "type": "hook",
+          "hook": "jit-retrieve.session_start.end",
+          "contextChanged": false,
+          "toolFailed": false
+        },
+        {
+          "seq": 10,
+          "at": "2026-09-22T03:54:23.123Z",
+          "type": "hook",
+          "hook": "jev-advisor.session_start.start"
+        },
+        {
+          "seq": 11,
+          "at": "2026-09-22T03:54:23.123Z",
+          "type": "hook",
+          "hook": "jev-advisor.session_start.end",
+          "contextChanged": false,
+          "toolFailed": false
+        },
+        {
+          "seq": 12,
+          "at": "2026-09-22T03:54:23.123Z",
+          "type": "hook",
+          "hook": "runtime.session_start",
+          "provider": "ollama",
+          "model": "qwen3-coder-next:48k"
+        },
+        {
+          "seq": 13,
+          "at": "2026-09-22T03:54:23.125Z",
+          "type": "session",
+          "sessionId": "01a0c740-1db3-7566-81f7-e9169e90b445",
+          "initialMessageCount": 0,
+          "provider": "ollama",
+          "model": "qwen3-coder-next:48k"
+        },
+        {
+          "seq": 14,
+          "at": "2026-09-22T03:54:23.125Z",
+          "type": "status",
+          "status": "running"
+        },
+        {
+          "seq": 15,
+          "at": "2026-09-22T03:54:23.128Z",
+          "type": "hook",
+          "hook": "jit-retrieve.before_agent_start.start"
+        },
+        {
+          "seq": 16,
+          "at": "2026-09-22T03:54:24.934Z",
+          "type": "hook",
+          "hook": "jit-retrieve.before_agent_start.end",
+          "contextChanged": false,
+          "toolFailed": false
+        },
+        {
+          "seq": 17,
+          "at": "2026-09-22T03:54:24.934Z",
+          "type": "hook",
+          "hook": "runtime.before_agent_start",
+          "contextSha256": "2ccac23a91086fe2efaa00612f43fffd00932b6718de647205cb456232840d70",
+          "skillSha256": "1f3ba82c0c8a91ed42a13eea9877dcff99d38e011c190799029e60c6c803d1c8",
+          "skillNames": [
+            "review-evidence"
+          ],
+          "projectContextLoaded": true
+        },
+        {
+          "seq": 18,
+          "at": "2026-09-22T03:54:24.945Z",
+          "type": "hook",
+          "hook": "runtime.before_provider_request",
+          "provider": "ollama",
+          "model": "qwen3-coder-next:48k",
+          "projectContextPresent": true,
+          "reviewSkillPresent": true,
+          "payloadSha256": "1dfed002005d9fbd2312aff8ed6a6bc93d4481edf20ebaae86d34a84bf354db7"
+        },
+        {
+          "seq": 19,
+          "at": "2026-09-22T03:54:26.623Z",
+          "type": "hook",
+          "hook": "runtime.after_provider_response",
+          "status": 200
+        },
+        {
+          "seq": 20,
+          "at": "2026-09-22T03:54:26.626Z",
+          "type": "text_delta",
+          "text": "PI"
+        },
+        {
+          "seq": 21,
+          "at": "2026-09-22T03:54:26.644Z",
+          "type": "text_delta",
+          "text": "_GATE"
+        },
+        {
+          "seq": 22,
+          "at": "2026-09-22T03:54:26.661Z",
+          "type": "text_delta",
+          "text": "WAY"
+        },
+        {
+          "seq": 23,
+          "at": "2026-09-22T03:54:26.679Z",
+          "type": "text_delta",
+          "text": "_CONTEXT"
+        },
+        {
+          "seq": 24,
+          "at": "2026-09-22T03:54:26.696Z",
+          "type": "text_delta",
+          "text": "_READY"
+        },
+        {
+          "seq": 25,
+          "at": "2026-09-22T03:54:26.724Z",
+          "type": "terminal",
+          "status": "completed",
+          "error": null,
+          "childExited": true
+        }
+      ]
+    },
+    {
+      "receipt": {
+        "id": "3ebfbfb8-ee8a-405c-bb4c-56257701a543",
+        "project": "proof",
+        "status": "completed",
+        "startedAt": "2026-09-22T03:54:26.727Z",
+        "finishedAt": "2026-09-22T03:54:34.238Z",
+        "profile": "piper-local-reviewer-v1",
+        "provider": "ollama",
+        "model": "qwen3-coder-next:48k",
+        "pid": 267062,
+        "sessionId": "01a0c740-2cf5-747e-8e18-d26e6f7f442b",
+        "initialMessageCount": 0,
+        "text": "- **Arithmetic bug**: The function subtracts `$percent` (10) as a raw value instead of computing `subtotal * (1 - percent/100)`.\n- **Actual total returned**: `200 - 10 = 190`\n- **Intended total (10% discount on 200)**: `200 * (1 - 10/100) = 200 * 0.9 = 180`\n\nSo the function returns **190**, but the correct discounted total should be **180**.",
+        "error": null,
+        "stopReason": "stop",
+        "childExited": true,
+        "exitCode": 143,
+        "exitSignal": null,
+        "hooks": [
+          {
+            "at": "2026-09-22T03:54:26.990Z",
+            "hook": "registered",
+            "extension": "jit-retrieve",
+            "event": "session_start"
+          },
+          {
+            "at": "2026-09-22T03:54:26.990Z",
+            "hook": "registered",
+            "extension": "jit-retrieve",
+            "event": "before_agent_start"
+          },
+          {
+            "at": "2026-09-22T03:54:26.990Z",
+            "hook": "extension.loaded",
+            "extension": "jit-retrieve"
+          },
+          {
+            "at": "2026-09-22T03:54:26.990Z",
+            "hook": "registered",
+            "extension": "jev-advisor",
+            "event": "session_start"
+          },
+          {
+            "at": "2026-09-22T03:54:26.990Z",
+            "hook": "registered",
+            "extension": "jev-advisor",
+            "event": "tool_execution_end"
+          },
+          {
+            "at": "2026-09-22T03:54:26.990Z",
+            "hook": "extension.loaded",
+            "extension": "jev-advisor"
+          },
+          {
+            "at": "2026-09-22T03:54:27.010Z",
+            "hook": "jit-retrieve.session_start.start"
+          },
+          {
+            "at": "2026-09-22T03:54:27.010Z",
+            "hook": "jit-retrieve.session_start.end",
+            "contextChanged": false,
+            "toolFailed": false
+          },
+          {
+            "at": "2026-09-22T03:54:27.010Z",
+            "hook": "jev-advisor.session_start.start"
+          },
+          {
+            "at": "2026-09-22T03:54:27.010Z",
+            "hook": "jev-advisor.session_start.end",
+            "contextChanged": false,
+            "toolFailed": false
+          },
+          {
+            "at": "2026-09-22T03:54:27.010Z",
+            "hook": "runtime.session_start",
+            "provider": "ollama",
+            "model": "qwen3-coder-next:48k"
+          },
+          {
+            "at": "2026-09-22T03:54:27.015Z",
+            "hook": "jit-retrieve.before_agent_start.start"
+          },
+          {
+            "at": "2026-09-22T03:54:28.821Z",
+            "hook": "jit-retrieve.before_agent_start.end",
+            "contextChanged": false,
+            "toolFailed": false
+          },
+          {
+            "at": "2026-09-22T03:54:28.821Z",
+            "hook": "runtime.before_agent_start",
+            "contextSha256": "2ccac23a91086fe2efaa00612f43fffd00932b6718de647205cb456232840d70",
+            "skillSha256": "1f3ba82c0c8a91ed42a13eea9877dcff99d38e011c190799029e60c6c803d1c8",
+            "skillNames": [
+              "review-evidence"
+            ],
+            "projectContextLoaded": true
+          },
+          {
+            "at": "2026-09-22T03:54:28.831Z",
+            "hook": "runtime.before_provider_request",
+            "provider": "ollama",
+            "model": "qwen3-coder-next:48k",
+            "projectContextPresent": true,
+            "reviewSkillPresent": true,
+            "payloadSha256": "58aab136c06ca101b8f58f8f38bb971095e519ce2a573037e4e59afd7e7963fc"
+          },
+          {
+            "at": "2026-09-22T03:54:30.867Z",
+            "hook": "runtime.after_provider_response",
+            "status": 200
+          },
+          {
+            "at": "2026-09-22T03:54:30.886Z",
+            "hook": "runtime.tool_call",
+            "tool": "read",
+            "permitted": true
+          },
+          {
+            "at": "2026-09-22T03:54:30.890Z",
+            "hook": "jev-advisor.tool_execution_end.start"
+          },
+          {
+            "at": "2026-09-22T03:54:30.890Z",
+            "hook": "jev-advisor.tool_execution_end.end",
+            "contextChanged": false,
+            "toolFailed": false
+          },
+          {
+            "at": "2026-09-22T03:54:30.891Z",
+            "hook": "runtime.before_provider_request",
+            "provider": "ollama",
+            "model": "qwen3-coder-next:48k",
+            "projectContextPresent": true,
+            "reviewSkillPresent": true,
+            "payloadSha256": "9996e00e89d08514ab0d08f380799c66af78fd0e6f618d85f064eb8f85c441bc"
+          },
+          {
+            "at": "2026-09-22T03:54:31.981Z",
+            "hook": "runtime.after_provider_response",
+            "status": 200
+          }
+        ]
+      },
+      "events": [
+        {
+          "seq": 1,
+          "at": "2026-09-22T03:54:26.727Z",
+          "type": "status",
+          "status": "starting"
+        },
+        {
+          "seq": 2,
+          "at": "2026-09-22T03:54:26.990Z",
+          "type": "hook",
+          "hook": "registered",
+          "extension": "jit-retrieve",
+          "event": "session_start"
+        },
+        {
+          "seq": 3,
+          "at": "2026-09-22T03:54:26.990Z",
+          "type": "hook",
+          "hook": "registered",
+          "extension": "jit-retrieve",
+          "event": "before_agent_start"
+        },
+        {
+          "seq": 4,
+          "at": "2026-09-22T03:54:26.990Z",
+          "type": "hook",
+          "hook": "extension.loaded",
+          "extension": "jit-retrieve"
+        },
+        {
+          "seq": 5,
+          "at": "2026-09-22T03:54:26.990Z",
+          "type": "hook",
+          "hook": "registered",
+          "extension": "jev-advisor",
+          "event": "session_start"
+        },
+        {
+          "seq": 6,
+          "at": "2026-09-22T03:54:26.990Z",
+          "type": "hook",
+          "hook": "registered",
+          "extension": "jev-advisor",
+          "event": "tool_execution_end"
+        },
+        {
+          "seq": 7,
+          "at": "2026-09-22T03:54:26.990Z",
+          "type": "hook",
+          "hook": "extension.loaded",
+          "extension": "jev-advisor"
+        },
+        {
+          "seq": 8,
+          "at": "2026-09-22T03:54:27.010Z",
+          "type": "hook",
+          "hook": "jit-retrieve.session_start.start"
+        },
+        {
+          "seq": 9,
+          "at": "2026-09-22T03:54:27.010Z",
+          "type": "hook",
+          "hook": "jit-retrieve.session_start.end",
+          "contextChanged": false,
+          "toolFailed": false
+        },
+        {
+          "seq": 10,
+          "at": "2026-09-22T03:54:27.010Z",
+          "type": "hook",
+          "hook": "jev-advisor.session_start.start"
+        },
+        {
+          "seq": 11,
+          "at": "2026-09-22T03:54:27.010Z",
+          "type": "hook",
+          "hook": "jev-advisor.session_start.end",
+          "contextChanged": false,
+          "toolFailed": false
+        },
+        {
+          "seq": 12,
+          "at": "2026-09-22T03:54:27.010Z",
+          "type": "hook",
+          "hook": "runtime.session_start",
+          "provider": "ollama",
+          "model": "qwen3-coder-next:48k"
+        },
+        {
+          "seq": 13,
+          "at": "2026-09-22T03:54:27.013Z",
+          "type": "session",
+          "sessionId": "01a0c740-2cf5-747e-8e18-d26e6f7f442b",
+          "initialMessageCount": 0,
+          "provider": "ollama",
+          "model": "qwen3-coder-next:48k"
+        },
+        {
+          "seq": 14,
+          "at": "2026-09-22T03:54:27.013Z",
+          "type": "status",
+          "status": "running"
+        },
+        {
+          "seq": 15,
+          "at": "2026-09-22T03:54:27.015Z",
+          "type": "hook",
+          "hook": "jit-retrieve.before_agent_start.start"
+        },
+        {
+          "seq": 16,
+          "at": "2026-09-22T03:54:28.821Z",
+          "type": "hook",
+          "hook": "jit-retrieve.before_agent_start.end",
+          "contextChanged": false,
+          "toolFailed": false
+        },
+        {
+          "seq": 17,
+          "at": "2026-09-22T03:54:28.821Z",
+          "type": "hook",
+          "hook": "runtime.before_agent_start",
+          "contextSha256": "2ccac23a91086fe2efaa00612f43fffd00932b6718de647205cb456232840d70",
+          "skillSha256": "1f3ba82c0c8a91ed42a13eea9877dcff99d38e011c190799029e60c6c803d1c8",
+          "skillNames": [
+            "review-evidence"
+          ],
+          "projectContextLoaded": true
+        },
+        {
+          "seq": 18,
+          "at": "2026-09-22T03:54:28.831Z",
+          "type": "hook",
+          "hook": "runtime.before_provider_request",
+          "provider": "ollama",
+          "model": "qwen3-coder-next:48k",
+          "projectContextPresent": true,
+          "reviewSkillPresent": true,
+          "payloadSha256": "58aab136c06ca101b8f58f8f38bb971095e519ce2a573037e4e59afd7e7963fc"
+        },
+        {
+          "seq": 19,
+          "at": "2026-09-22T03:54:30.867Z",
+          "type": "hook",
+          "hook": "runtime.after_provider_response",
+          "status": 200
+        },
+        {
+          "seq": 20,
+          "at": "2026-09-22T03:54:30.884Z",
+          "type": "tool_execution_start",
+          "tool": "read",
+          "toolCallId": "call_yw47o5jh",
+          "isError": false
+        },
+        {
+          "seq": 21,
+          "at": "2026-09-22T03:54:30.886Z",
+          "type": "hook",
+          "hook": "runtime.tool_call",
+          "tool": "read",
+          "permitted": true
+        },
+        {
+          "seq": 22,
+          "at": "2026-09-22T03:54:30.890Z",
+          "type": "hook",
+          "hook": "jev-advisor.tool_execution_end.start"
+        },
+        {
+          "seq": 23,
+          "at": "2026-09-22T03:54:30.890Z",
+          "type": "hook",
+          "hook": "jev-advisor.tool_execution_end.end",
+          "contextChanged": false,
+          "toolFailed": false
+        },
+        {
+          "seq": 24,
+          "at": "2026-09-22T03:54:30.890Z",
+          "type": "tool_execution_end",
+          "tool": "read",
+          "toolCallId": "call_yw47o5jh",
+          "isError": false
+        },
+        {
+          "seq": 25,
+          "at": "2026-09-22T03:54:30.891Z",
+          "type": "hook",
+          "hook": "runtime.before_provider_request",
+          "provider": "ollama",
+          "model": "qwen3-coder-next:48k",
+          "projectContextPresent": true,
+          "reviewSkillPresent": true,
+          "payloadSha256": "9996e00e89d08514ab0d08f380799c66af78fd0e6f618d85f064eb8f85c441bc"
+        },
+        {
+          "seq": 26,
+          "at": "2026-09-22T03:54:31.981Z",
+          "type": "hook",
+          "hook": "runtime.after_provider_response",
+          "status": 200
+        },
+        {
+          "seq": 27,
+          "at": "2026-09-22T03:54:31.982Z",
+          "type": "text_delta",
+          "text": "-"
+        },
+        {
+          "seq": 28,
+          "at": "2026-09-22T03:54:32.002Z",
+          "type": "text_delta",
+          "text": " **"
+        },
+        {
+          "seq": 29,
+          "at": "2026-09-22T03:54:32.020Z",
+          "type": "text_delta",
+          "text": "Ar"
+        },
+        {
+          "seq": 30,
+          "at": "2026-09-22T03:54:32.037Z",
+          "type": "text_delta",
+          "text": "ithmetic"
+        },
+        {
+          "seq": 31,
+          "at": "2026-09-22T03:54:32.054Z",
+          "type": "text_delta",
+          "text": " bug"
+        },
+        {
+          "seq": 32,
+          "at": "2026-09-22T03:54:32.072Z",
+          "type": "text_delta",
+          "text": "**:"
+        },
+        {
+          "seq": 33,
+          "at": "2026-09-22T03:54:32.089Z",
+          "type": "text_delta",
+          "text": " The"
+        },
+        {
+          "seq": 34,
+          "at": "2026-09-22T03:54:32.107Z",
+          "type": "text_delta",
+          "text": " function"
+        },
+        {
+          "seq": 35,
+          "at": "2026-09-22T03:54:32.124Z",
+          "type": "text_delta",
+          "text": " subtract"
+        },
+        {
+          "seq": 36,
+          "at": "2026-09-22T03:54:32.141Z",
+          "type": "text_delta",
+          "text": "s"
+        },
+        {
+          "seq": 37,
+          "at": "2026-09-22T03:54:32.159Z",
+          "type": "text_delta",
+          "text": " `$"
+        },
+        {
+          "seq": 38,
+          "at": "2026-09-22T03:54:32.176Z",
+          "type": "text_delta",
+          "text": "percent"
+        },
+        {
+          "seq": 39,
+          "at": "2026-09-22T03:54:32.193Z",
+          "type": "text_delta",
+          "text": "`"
+        },
+        {
+          "seq": 40,
+          "at": "2026-09-22T03:54:32.211Z",
+          "type": "text_delta",
+          "text": " ("
+        },
+        {
+          "seq": 41,
+          "at": "2026-09-22T03:54:32.228Z",
+          "type": "text_delta",
+          "text": "1"
+        },
+        {
+          "seq": 42,
+          "at": "2026-09-22T03:54:32.246Z",
+          "type": "text_delta",
+          "text": "0"
+        },
+        {
+          "seq": 43,
+          "at": "2026-09-22T03:54:32.263Z",
+          "type": "text_delta",
+          "text": ")"
+        },
+        {
+          "seq": 44,
+          "at": "2026-09-22T03:54:32.281Z",
+          "type": "text_delta",
+          "text": " as"
+        },
+        {
+          "seq": 45,
+          "at": "2026-09-22T03:54:32.298Z",
+          "type": "text_delta",
+          "text": " a"
+        },
+        {
+          "seq": 46,
+          "at": "2026-09-22T03:54:32.316Z",
+          "type": "text_delta",
+          "text": " raw"
+        },
+        {
+          "seq": 47,
+          "at": "2026-09-22T03:54:32.333Z",
+          "type": "text_delta",
+          "text": " value"
+        },
+        {
+          "seq": 48,
+          "at": "2026-09-22T03:54:32.351Z",
+          "type": "text_delta",
+          "text": " instead"
+        },
+        {
+          "seq": 49,
+          "at": "2026-09-22T03:54:32.370Z",
+          "type": "text_delta",
+          "text": " of"
+        },
+        {
+          "seq": 50,
+          "at": "2026-09-22T03:54:32.390Z",
+          "type": "text_delta",
+          "text": " computing"
+        },
+        {
+          "seq": 51,
+          "at": "2026-09-22T03:54:32.404Z",
+          "type": "text_delta",
+          "text": " `"
+        },
+        {
+          "seq": 52,
+          "at": "2026-09-22T03:54:32.422Z",
+          "type": "text_delta",
+          "text": "subtotal"
+        },
+        {
+          "seq": 53,
+          "at": "2026-09-22T03:54:32.439Z",
+          "type": "text_delta",
+          "text": " *"
+        },
+        {
+          "seq": 54,
+          "at": "2026-09-22T03:54:32.457Z",
+          "type": "text_delta",
+          "text": " ("
+        },
+        {
+          "seq": 55,
+          "at": "2026-09-22T03:54:32.474Z",
+          "type": "text_delta",
+          "text": "1"
+        },
+        {
+          "seq": 56,
+          "at": "2026-09-22T03:54:32.492Z",
+          "type": "text_delta",
+          "text": " -"
+        },
+        {
+          "seq": 57,
+          "at": "2026-09-22T03:54:32.509Z",
+          "type": "text_delta",
+          "text": " percent"
+        },
+        {
+          "seq": 58,
+          "at": "2026-09-22T03:54:32.527Z",
+          "type": "text_delta",
+          "text": "/"
+        },
+        {
+          "seq": 59,
+          "at": "2026-09-22T03:54:32.544Z",
+          "type": "text_delta",
+          "text": "1"
+        },
+        {
+          "seq": 60,
+          "at": "2026-09-22T03:54:32.561Z",
+          "type": "text_delta",
+          "text": "0"
+        },
+        {
+          "seq": 61,
+          "at": "2026-09-22T03:54:32.579Z",
+          "type": "text_delta",
+          "text": "0"
+        },
+        {
+          "seq": 62,
+          "at": "2026-09-22T03:54:32.597Z",
+          "type": "text_delta",
+          "text": ")"
+        },
+        {
+          "seq": 63,
+          "at": "2026-09-22T03:54:32.615Z",
+          "type": "text_delta",
+          "text": "`."
+        },
+        {
+          "seq": 64,
+          "at": "2026-09-22T03:54:32.632Z",
+          "type": "text_delta",
+          "text": "\n-"
+        },
+        {
+          "seq": 65,
+          "at": "2026-09-22T03:54:32.650Z",
+          "type": "text_delta",
+          "text": " **"
+        },
+        {
+          "seq": 66,
+          "at": "2026-09-22T03:54:32.667Z",
+          "type": "text_delta",
+          "text": "Actual"
+        },
+        {
+          "seq": 67,
+          "at": "2026-09-22T03:54:32.685Z",
+          "type": "text_delta",
+          "text": " total"
+        },
+        {
+          "seq": 68,
+          "at": "2026-09-22T03:54:32.702Z",
+          "type": "text_delta",
+          "text": " returned"
+        },
+        {
+          "seq": 69,
+          "at": "2026-09-22T03:54:32.719Z",
+          "type": "text_delta",
+          "text": "**:"
+        },
+        {
+          "seq": 70,
+          "at": "2026-09-22T03:54:32.737Z",
+          "type": "text_delta",
+          "text": " `"
+        },
+        {
+          "seq": 71,
+          "at": "2026-09-22T03:54:32.754Z",
+          "type": "text_delta",
+          "text": "2"
+        },
+        {
+          "seq": 72,
+          "at": "2026-09-22T03:54:32.772Z",
+          "type": "text_delta",
+          "text": "0"
+        },
+        {
+          "seq": 73,
+          "at": "2026-09-22T03:54:32.790Z",
+          "type": "text_delta",
+          "text": "0"
+        },
+        {
+          "seq": 74,
+          "at": "2026-09-22T03:54:32.807Z",
+          "type": "text_delta",
+          "text": " -"
+        },
+        {
+          "seq": 75,
+          "at": "2026-09-22T03:54:32.842Z",
+          "type": "text_delta",
+          "text": " 1"
+        },
+        {
+          "seq": 76,
+          "at": "2026-09-22T03:54:32.860Z",
+          "type": "text_delta",
+          "text": "0"
+        },
+        {
+          "seq": 77,
+          "at": "2026-09-22T03:54:32.878Z",
+          "type": "text_delta",
+          "text": " ="
+        },
+        {
+          "seq": 78,
+          "at": "2026-09-22T03:54:32.914Z",
+          "type": "text_delta",
+          "text": " 1"
+        },
+        {
+          "seq": 79,
+          "at": "2026-09-22T03:54:32.931Z",
+          "type": "text_delta",
+          "text": "9"
+        },
+        {
+          "seq": 80,
+          "at": "2026-09-22T03:54:32.948Z",
+          "type": "text_delta",
+          "text": "0"
+        },
+        {
+          "seq": 81,
+          "at": "2026-09-22T03:54:32.966Z",
+          "type": "text_delta",
+          "text": "`"
+        },
+        {
+          "seq": 82,
+          "at": "2026-09-22T03:54:32.983Z",
+          "type": "text_delta",
+          "text": "\n-"
+        },
+        {
+          "seq": 83,
+          "at": "2026-09-22T03:54:33.001Z",
+          "type": "text_delta",
+          "text": " **"
+        },
+        {
+          "seq": 84,
+          "at": "2026-09-22T03:54:33.018Z",
+          "type": "text_delta",
+          "text": "Int"
+        },
+        {
+          "seq": 85,
+          "at": "2026-09-22T03:54:33.036Z",
+          "type": "text_delta",
+          "text": "ended"
+        },
+        {
+          "seq": 86,
+          "at": "2026-09-22T03:54:33.053Z",
+          "type": "text_delta",
+          "text": " total"
+        },
+        {
+          "seq": 87,
+          "at": "2026-09-22T03:54:33.071Z",
+          "type": "text_delta",
+          "text": " ("
+        },
+        {
+          "seq": 88,
+          "at": "2026-09-22T03:54:33.088Z",
+          "type": "text_delta",
+          "text": "1"
+        },
+        {
+          "seq": 89,
+          "at": "2026-09-22T03:54:33.105Z",
+          "type": "text_delta",
+          "text": "0"
+        },
+        {
+          "seq": 90,
+          "at": "2026-09-22T03:54:33.123Z",
+          "type": "text_delta",
+          "text": "%"
+        },
+        {
+          "seq": 91,
+          "at": "2026-09-22T03:54:33.140Z",
+          "type": "text_delta",
+          "text": " discount"
+        },
+        {
+          "seq": 92,
+          "at": "2026-09-22T03:54:33.158Z",
+          "type": "text_delta",
+          "text": " on"
+        },
+        {
+          "seq": 93,
+          "at": "2026-09-22T03:54:33.192Z",
+          "type": "text_delta",
+          "text": " 2"
+        },
+        {
+          "seq": 94,
+          "at": "2026-09-22T03:54:33.210Z",
+          "type": "text_delta",
+          "text": "0"
+        },
+        {
+          "seq": 95,
+          "at": "2026-09-22T03:54:33.227Z",
+          "type": "text_delta",
+          "text": "0"
+        },
+        {
+          "seq": 96,
+          "at": "2026-09-22T03:54:33.244Z",
+          "type": "text_delta",
+          "text": ")**"
+        },
+        {
+          "seq": 97,
+          "at": "2026-09-22T03:54:33.262Z",
+          "type": "text_delta",
+          "text": ":"
+        },
+        {
+          "seq": 98,
+          "at": "2026-09-22T03:54:33.279Z",
+          "type": "text_delta",
+          "text": " `"
+        },
+        {
+          "seq": 99,
+          "at": "2026-09-22T03:54:33.297Z",
+          "type": "text_delta",
+          "text": "2"
+        },
+        {
+          "seq": 100,
+          "at": "2026-09-22T03:54:33.314Z",
+          "type": "text_delta",
+          "text": "0"
+        },
+        {
+          "seq": 101,
+          "at": "2026-09-22T03:54:33.332Z",
+          "type": "text_delta",
+          "text": "0"
+        },
+        {
+          "seq": 102,
+          "at": "2026-09-22T03:54:33.349Z",
+          "type": "text_delta",
+          "text": " *"
+        },
+        {
+          "seq": 103,
+          "at": "2026-09-22T03:54:33.366Z",
+          "type": "text_delta",
+          "text": " ("
+        },
+        {
+          "seq": 104,
+          "at": "2026-09-22T03:54:33.383Z",
+          "type": "text_delta",
+          "text": "1"
+        },
+        {
+          "seq": 105,
+          "at": "2026-09-22T03:54:33.401Z",
+          "type": "text_delta",
+          "text": " -"
+        },
+        {
+          "seq": 106,
+          "at": "2026-09-22T03:54:33.436Z",
+          "type": "text_delta",
+          "text": " 1"
+        },
+        {
+          "seq": 107,
+          "at": "2026-09-22T03:54:33.453Z",
+          "type": "text_delta",
+          "text": "0"
+        },
+        {
+          "seq": 108,
+          "at": "2026-09-22T03:54:33.471Z",
+          "type": "text_delta",
+          "text": "/"
+        },
+        {
+          "seq": 109,
+          "at": "2026-09-22T03:54:33.488Z",
+          "type": "text_delta",
+          "text": "1"
+        },
+        {
+          "seq": 110,
+          "at": "2026-09-22T03:54:33.506Z",
+          "type": "text_delta",
+          "text": "0"
+        },
+        {
+          "seq": 111,
+          "at": "2026-09-22T03:54:33.523Z",
+          "type": "text_delta",
+          "text": "0"
+        },
+        {
+          "seq": 112,
+          "at": "2026-09-22T03:54:33.540Z",
+          "type": "text_delta",
+          "text": ")"
+        },
+        {
+          "seq": 113,
+          "at": "2026-09-22T03:54:33.558Z",
+          "type": "text_delta",
+          "text": " ="
+        },
+        {
+          "seq": 114,
+          "at": "2026-09-22T03:54:33.593Z",
+          "type": "text_delta",
+          "text": " 2"
+        },
+        {
+          "seq": 115,
+          "at": "2026-09-22T03:54:33.610Z",
+          "type": "text_delta",
+          "text": "0"
+        },
+        {
+          "seq": 116,
+          "at": "2026-09-22T03:54:33.628Z",
+          "type": "text_delta",
+          "text": "0"
+        },
+        {
+          "seq": 117,
+          "at": "2026-09-22T03:54:33.646Z",
+          "type": "text_delta",
+          "text": " *"
+        },
+        {
+          "seq": 118,
+          "at": "2026-09-22T03:54:33.681Z",
+          "type": "text_delta",
+          "text": " 0"
+        },
+        {
+          "seq": 119,
+          "at": "2026-09-22T03:54:33.699Z",
+          "type": "text_delta",
+          "text": "."
+        },
+        {
+          "seq": 120,
+          "at": "2026-09-22T03:54:33.716Z",
+          "type": "text_delta",
+          "text": "9"
+        },
+        {
+          "seq": 121,
+          "at": "2026-09-22T03:54:33.734Z",
+          "type": "text_delta",
+          "text": " ="
+        },
+        {
+          "seq": 122,
+          "at": "2026-09-22T03:54:33.768Z",
+          "type": "text_delta",
+          "text": " 1"
+        },
+        {
+          "seq": 123,
+          "at": "2026-09-22T03:54:33.786Z",
+          "type": "text_delta",
+          "text": "8"
+        },
+        {
+          "seq": 124,
+          "at": "2026-09-22T03:54:33.803Z",
+          "type": "text_delta",
+          "text": "0"
+        },
+        {
+          "seq": 125,
+          "at": "2026-09-22T03:54:33.821Z",
+          "type": "text_delta",
+          "text": "`"
+        },
+        {
+          "seq": 126,
+          "at": "2026-09-22T03:54:33.838Z",
+          "type": "text_delta",
+          "text": "\n\nSo"
+        },
+        {
+          "seq": 127,
+          "at": "2026-09-22T03:54:33.855Z",
+          "type": "text_delta",
+          "text": " the"
+        },
+        {
+          "seq": 128,
+          "at": "2026-09-22T03:54:33.873Z",
+          "type": "text_delta",
+          "text": " function"
+        },
+        {
+          "seq": 129,
+          "at": "2026-09-22T03:54:33.892Z",
+          "type": "text_delta",
+          "text": " returns"
+        },
+        {
+          "seq": 130,
+          "at": "2026-09-22T03:54:33.908Z",
+          "type": "text_delta",
+          "text": " **"
+        },
+        {
+          "seq": 131,
+          "at": "2026-09-22T03:54:33.926Z",
+          "type": "text_delta",
+          "text": "1"
+        },
+        {
+          "seq": 132,
+          "at": "2026-09-22T03:54:33.943Z",
+          "type": "text_delta",
+          "text": "9"
+        },
+        {
+          "seq": 133,
+          "at": "2026-09-22T03:54:33.961Z",
+          "type": "text_delta",
+          "text": "0"
+        },
+        {
+          "seq": 134,
+          "at": "2026-09-22T03:54:33.979Z",
+          "type": "text_delta",
+          "text": "**,"
+        },
+        {
+          "seq": 135,
+          "at": "2026-09-22T03:54:33.996Z",
+          "type": "text_delta",
+          "text": " but"
+        },
+        {
+          "seq": 136,
+          "at": "2026-09-22T03:54:34.013Z",
+          "type": "text_delta",
+          "text": " the"
+        },
+        {
+          "seq": 137,
+          "at": "2026-09-22T03:54:34.031Z",
+          "type": "text_delta",
+          "text": " correct"
+        },
+        {
+          "seq": 138,
+          "at": "2026-09-22T03:54:34.048Z",
+          "type": "text_delta",
+          "text": " discounted"
+        },
+        {
+          "seq": 139,
+          "at": "2026-09-22T03:54:34.066Z",
+          "type": "text_delta",
+          "text": " total"
+        },
+        {
+          "seq": 140,
+          "at": "2026-09-22T03:54:34.083Z",
+          "type": "text_delta",
+          "text": " should"
+        },
+        {
+          "seq": 141,
+          "at": "2026-09-22T03:54:34.101Z",
+          "type": "text_delta",
+          "text": " be"
+        },
+        {
+          "seq": 142,
+          "at": "2026-09-22T03:54:34.118Z",
+          "type": "text_delta",
+          "text": " **"
+        },
+        {
+          "seq": 143,
+          "at": "2026-09-22T03:54:34.136Z",
+          "type": "text_delta",
+          "text": "1"
+        },
+        {
+          "seq": 144,
+          "at": "2026-09-22T03:54:34.153Z",
+          "type": "text_delta",
+          "text": "8"
+        },
+        {
+          "seq": 145,
+          "at": "2026-09-22T03:54:34.171Z",
+          "type": "text_delta",
+          "text": "0"
+        },
+        {
+          "seq": 146,
+          "at": "2026-09-22T03:54:34.188Z",
+          "type": "text_delta",
+          "text": "**"
+        },
+        {
+          "seq": 147,
+          "at": "2026-09-22T03:54:34.206Z",
+          "type": "text_delta",
+          "text": "."
+        },
+        {
+          "seq": 148,
+          "at": "2026-09-22T03:54:34.238Z",
+          "type": "terminal",
+          "status": "completed",
+          "error": null,
+          "childExited": true
+        }
+      ]
+    },
+    {
+      "receipt": {
+        "id": "78e318a8-bbcb-47de-a256-70ab8072c142",
+        "project": "proof",
+        "status": "cancelled",
+        "startedAt": "2026-09-22T03:54:34.242Z",
+        "finishedAt": "2026-09-22T03:54:38.191Z",
+        "profile": "piper-local-reviewer-v1",
+        "provider": "ollama",
+        "model": "qwen3-coder-next:48k",
+        "pid": 267151,
+        "sessionId": "01a0c740-4a55-75a0-8f91-3d94aa9d597d",
+        "initialMessageCount": 0,
+        "text": "I",
+        "error": null,
+        "stopReason": "aborted",
+        "childExited": true,
+        "exitCode": 143,
+        "exitSignal": null,
+        "cancelRequestedAt": "2026-09-22T03:54:38.175Z",
+        "abortAcknowledged": true,
+        "hooks": [
+          {
+            "at": "2026-09-22T03:54:34.509Z",
+            "hook": "registered",
+            "extension": "jit-retrieve",
+            "event": "session_start"
+          },
+          {
+            "at": "2026-09-22T03:54:34.509Z",
+            "hook": "registered",
+            "extension": "jit-retrieve",
+            "event": "before_agent_start"
+          },
+          {
+            "at": "2026-09-22T03:54:34.509Z",
+            "hook": "extension.loaded",
+            "extension": "jit-retrieve"
+          },
+          {
+            "at": "2026-09-22T03:54:34.509Z",
+            "hook": "registered",
+            "extension": "jev-advisor",
+            "event": "session_start"
+          },
+          {
+            "at": "2026-09-22T03:54:34.509Z",
+            "hook": "registered",
+            "extension": "jev-advisor",
+            "event": "tool_execution_end"
+          },
+          {
+            "at": "2026-09-22T03:54:34.509Z",
+            "hook": "extension.loaded",
+            "extension": "jev-advisor"
+          },
+          {
+            "at": "2026-09-22T03:54:34.523Z",
+            "hook": "jit-retrieve.session_start.start"
+          },
+          {
+            "at": "2026-09-22T03:54:34.523Z",
+            "hook": "jit-retrieve.session_start.end",
+            "contextChanged": false,
+            "toolFailed": false
+          },
+          {
+            "at": "2026-09-22T03:54:34.523Z",
+            "hook": "jev-advisor.session_start.start"
+          },
+          {
+            "at": "2026-09-22T03:54:34.523Z",
+            "hook": "jev-advisor.session_start.end",
+            "contextChanged": false,
+            "toolFailed": false
+          },
+          {
+            "at": "2026-09-22T03:54:34.523Z",
+            "hook": "runtime.session_start",
+            "provider": "ollama",
+            "model": "qwen3-coder-next:48k"
+          },
+          {
+            "at": "2026-09-22T03:54:34.531Z",
+            "hook": "jit-retrieve.before_agent_start.start"
+          },
+          {
+            "at": "2026-09-22T03:54:36.336Z",
+            "hook": "jit-retrieve.before_agent_start.end",
+            "contextChanged": false,
+            "toolFailed": false
+          },
+          {
+            "at": "2026-09-22T03:54:36.337Z",
+            "hook": "runtime.before_agent_start",
+            "contextSha256": "2ccac23a91086fe2efaa00612f43fffd00932b6718de647205cb456232840d70",
+            "skillSha256": "1f3ba82c0c8a91ed42a13eea9877dcff99d38e011c190799029e60c6c803d1c8",
+            "skillNames": [
+              "review-evidence"
+            ],
+            "projectContextLoaded": true
+          },
+          {
+            "at": "2026-09-22T03:54:36.347Z",
+            "hook": "runtime.before_provider_request",
+            "provider": "ollama",
+            "model": "qwen3-coder-next:48k",
+            "projectContextPresent": true,
+            "reviewSkillPresent": true,
+            "payloadSha256": "fba2cf21ae78a242e926a477f8097c9c7e1fd32cade77ebc113f234f9a52866b"
+          },
+          {
+            "at": "2026-09-22T03:54:38.169Z",
+            "hook": "runtime.after_provider_response",
+            "status": 200
+          }
+        ]
+      },
+      "events": [
+        {
+          "seq": 1,
+          "at": "2026-09-22T03:54:34.243Z",
+          "type": "status",
+          "status": "starting"
+        },
+        {
+          "seq": 2,
+          "at": "2026-09-22T03:54:34.509Z",
+          "type": "hook",
+          "hook": "registered",
+          "extension": "jit-retrieve",
+          "event": "session_start"
+        },
+        {
+          "seq": 3,
+          "at": "2026-09-22T03:54:34.509Z",
+          "type": "hook",
+          "hook": "registered",
+          "extension": "jit-retrieve",
+          "event": "before_agent_start"
+        },
+        {
+          "seq": 4,
+          "at": "2026-09-22T03:54:34.509Z",
+          "type": "hook",
+          "hook": "extension.loaded",
+          "extension": "jit-retrieve"
+        },
+        {
+          "seq": 5,
+          "at": "2026-09-22T03:54:34.509Z",
+          "type": "hook",
+          "hook": "registered",
+          "extension": "jev-advisor",
+          "event": "session_start"
+        },
+        {
+          "seq": 6,
+          "at": "2026-09-22T03:54:34.509Z",
+          "type": "hook",
+          "hook": "registered",
+          "extension": "jev-advisor",
+          "event": "tool_execution_end"
+        },
+        {
+          "seq": 7,
+          "at": "2026-09-22T03:54:34.509Z",
+          "type": "hook",
+          "hook": "extension.loaded",
+          "extension": "jev-advisor"
+        },
+        {
+          "seq": 8,
+          "at": "2026-09-22T03:54:34.523Z",
+          "type": "hook",
+          "hook": "jit-retrieve.session_start.start"
+        },
+        {
+          "seq": 9,
+          "at": "2026-09-22T03:54:34.523Z",
+          "type": "hook",
+          "hook": "jit-retrieve.session_start.end",
+          "contextChanged": false,
+          "toolFailed": false
+        },
+        {
+          "seq": 10,
+          "at": "2026-09-22T03:54:34.523Z",
+          "type": "hook",
+          "hook": "jev-advisor.session_start.start"
+        },
+        {
+          "seq": 11,
+          "at": "2026-09-22T03:54:34.523Z",
+          "type": "hook",
+          "hook": "jev-advisor.session_start.end",
+          "contextChanged": false,
+          "toolFailed": false
+        },
+        {
+          "seq": 12,
+          "at": "2026-09-22T03:54:34.523Z",
+          "type": "hook",
+          "hook": "runtime.session_start",
+          "provider": "ollama",
+          "model": "qwen3-coder-next:48k"
+        },
+        {
+          "seq": 13,
+          "at": "2026-09-22T03:54:34.526Z",
+          "type": "session",
+          "sessionId": "01a0c740-4a55-75a0-8f91-3d94aa9d597d",
+          "initialMessageCount": 0,
+          "provider": "ollama",
+          "model": "qwen3-coder-next:48k"
+        },
+        {
+          "seq": 14,
+          "at": "2026-09-22T03:54:34.526Z",
+          "type": "status",
+          "status": "running"
+        },
+        {
+          "seq": 15,
+          "at": "2026-09-22T03:54:34.531Z",
+          "type": "hook",
+          "hook": "jit-retrieve.before_agent_start.start"
+        },
+        {
+          "seq": 16,
+          "at": "2026-09-22T03:54:36.336Z",
+          "type": "hook",
+          "hook": "jit-retrieve.before_agent_start.end",
+          "contextChanged": false,
+          "toolFailed": false
+        },
+        {
+          "seq": 17,
+          "at": "2026-09-22T03:54:36.337Z",
+          "type": "hook",
+          "hook": "runtime.before_agent_start",
+          "contextSha256": "2ccac23a91086fe2efaa00612f43fffd00932b6718de647205cb456232840d70",
+          "skillSha256": "1f3ba82c0c8a91ed42a13eea9877dcff99d38e011c190799029e60c6c803d1c8",
+          "skillNames": [
+            "review-evidence"
+          ],
+          "projectContextLoaded": true
+        },
+        {
+          "seq": 18,
+          "at": "2026-09-22T03:54:36.347Z",
+          "type": "hook",
+          "hook": "runtime.before_provider_request",
+          "provider": "ollama",
+          "model": "qwen3-coder-next:48k",
+          "projectContextPresent": true,
+          "reviewSkillPresent": true,
+          "payloadSha256": "fba2cf21ae78a242e926a477f8097c9c7e1fd32cade77ebc113f234f9a52866b"
+        },
+        {
+          "seq": 19,
+          "at": "2026-09-22T03:54:38.169Z",
+          "type": "hook",
+          "hook": "runtime.after_provider_response",
+          "status": 200
+        },
+        {
+          "seq": 20,
+          "at": "2026-09-22T03:54:38.172Z",
+          "type": "text_delta",
+          "text": "I"
+        },
+        {
+          "seq": 21,
+          "at": "2026-09-22T03:54:38.175Z",
+          "type": "status",
+          "status": "cancelling"
+        },
+        {
+          "seq": 22,
+          "at": "2026-09-22T03:54:38.179Z",
+          "type": "cancel_ack"
+        },
+        {
+          "seq": 23,
+          "at": "2026-09-22T03:54:38.191Z",
+          "type": "terminal",
+          "status": "cancelled",
+          "error": null,
+          "childExited": true
+        }
+      ]
+    },
+    {
+      "receipt": {
+        "id": "8bf6aca9-651f-4a2a-a76d-044c7b4d79f6",
+        "project": "proof",
+        "status": "completed",
+        "startedAt": "2026-09-22T03:54:38.193Z",
+        "finishedAt": "2026-09-22T03:54:42.026Z",
+        "profile": "piper-local-reviewer-v1",
+        "provider": "ollama",
+        "model": "qwen3-coder-next:48k",
+        "pid": 267222,
+        "sessionId": "01a0c740-59ca-77c1-b6d3-6a2efc57517c",
+        "initialMessageCount": 0,
+        "text": "RECOVERY_OK",
+        "error": null,
+        "stopReason": "stop",
+        "childExited": true,
+        "exitCode": 143,
+        "exitSignal": null,
+        "hooks": [
+          {
+            "at": "2026-09-22T03:54:38.465Z",
+            "hook": "registered",
+            "extension": "jit-retrieve",
+            "event": "session_start"
+          },
+          {
+            "at": "2026-09-22T03:54:38.465Z",
+            "hook": "registered",
+            "extension": "jit-retrieve",
+            "event": "before_agent_start"
+          },
+          {
+            "at": "2026-09-22T03:54:38.465Z",
+            "hook": "extension.loaded",
+            "extension": "jit-retrieve"
+          },
+          {
+            "at": "2026-09-22T03:54:38.465Z",
+            "hook": "registered",
+            "extension": "jev-advisor",
+            "event": "session_start"
+          },
+          {
+            "at": "2026-09-22T03:54:38.465Z",
+            "hook": "registered",
+            "extension": "jev-advisor",
+            "event": "tool_execution_end"
+          },
+          {
+            "at": "2026-09-22T03:54:38.465Z",
+            "hook": "extension.loaded",
+            "extension": "jev-advisor"
+          },
+          {
+            "at": "2026-09-22T03:54:38.482Z",
+            "hook": "jit-retrieve.session_start.start"
+          },
+          {
+            "at": "2026-09-22T03:54:38.482Z",
+            "hook": "jit-retrieve.session_start.end",
+            "contextChanged": false,
+            "toolFailed": false
+          },
+          {
+            "at": "2026-09-22T03:54:38.482Z",
+            "hook": "jev-advisor.session_start.start"
+          },
+          {
+            "at": "2026-09-22T03:54:38.483Z",
+            "hook": "jev-advisor.session_start.end",
+            "contextChanged": false,
+            "toolFailed": false
+          },
+          {
+            "at": "2026-09-22T03:54:38.483Z",
+            "hook": "runtime.session_start",
+            "provider": "ollama",
+            "model": "qwen3-coder-next:48k"
+          },
+          {
+            "at": "2026-09-22T03:54:38.486Z",
+            "hook": "jit-retrieve.before_agent_start.start"
+          },
+          {
+            "at": "2026-09-22T03:54:40.293Z",
+            "hook": "jit-retrieve.before_agent_start.end",
+            "contextChanged": false,
+            "toolFailed": false
+          },
+          {
+            "at": "2026-09-22T03:54:40.293Z",
+            "hook": "runtime.before_agent_start",
+            "contextSha256": "2ccac23a91086fe2efaa00612f43fffd00932b6718de647205cb456232840d70",
+            "skillSha256": "1f3ba82c0c8a91ed42a13eea9877dcff99d38e011c190799029e60c6c803d1c8",
+            "skillNames": [
+              "review-evidence"
+            ],
+            "projectContextLoaded": true
+          },
+          {
+            "at": "2026-09-22T03:54:40.303Z",
+            "hook": "runtime.before_provider_request",
+            "provider": "ollama",
+            "model": "qwen3-coder-next:48k",
+            "projectContextPresent": true,
+            "reviewSkillPresent": true,
+            "payloadSha256": "5d55aca27fb0ce1bdb090677b7df39858de3cda2da08e76bcc1c3682442e43b9"
+          },
+          {
+            "at": "2026-09-22T03:54:41.961Z",
+            "hook": "runtime.after_provider_response",
+            "status": 200
+          }
+        ]
+      },
+      "events": [
+        {
+          "seq": 1,
+          "at": "2026-09-22T03:54:38.193Z",
+          "type": "status",
+          "status": "starting"
+        },
+        {
+          "seq": 2,
+          "at": "2026-09-22T03:54:38.465Z",
+          "type": "hook",
+          "hook": "registered",
+          "extension": "jit-retrieve",
+          "event": "session_start"
+        },
+        {
+          "seq": 3,
+          "at": "2026-09-22T03:54:38.465Z",
+          "type": "hook",
+          "hook": "registered",
+          "extension": "jit-retrieve",
+          "event": "before_agent_start"
+        },
+        {
+          "seq": 4,
+          "at": "2026-09-22T03:54:38.465Z",
+          "type": "hook",
+          "hook": "extension.loaded",
+          "extension": "jit-retrieve"
+        },
+        {
+          "seq": 5,
+          "at": "2026-09-22T03:54:38.465Z",
+          "type": "hook",
+          "hook": "registered",
+          "extension": "jev-advisor",
+          "event": "session_start"
+        },
+        {
+          "seq": 6,
+          "at": "2026-09-22T03:54:38.465Z",
+          "type": "hook",
+          "hook": "registered",
+          "extension": "jev-advisor",
+          "event": "tool_execution_end"
+        },
+        {
+          "seq": 7,
+          "at": "2026-09-22T03:54:38.465Z",
+          "type": "hook",
+          "hook": "extension.loaded",
+          "extension": "jev-advisor"
+        },
+        {
+          "seq": 8,
+          "at": "2026-09-22T03:54:38.482Z",
+          "type": "hook",
+          "hook": "jit-retrieve.session_start.start"
+        },
+        {
+          "seq": 9,
+          "at": "2026-09-22T03:54:38.482Z",
+          "type": "hook",
+          "hook": "jit-retrieve.session_start.end",
+          "contextChanged": false,
+          "toolFailed": false
+        },
+        {
+          "seq": 10,
+          "at": "2026-09-22T03:54:38.482Z",
+          "type": "hook",
+          "hook": "jev-advisor.session_start.start"
+        },
+        {
+          "seq": 11,
+          "at": "2026-09-22T03:54:38.483Z",
+          "type": "hook",
+          "hook": "jev-advisor.session_start.end",
+          "contextChanged": false,
+          "toolFailed": false
+        },
+        {
+          "seq": 12,
+          "at": "2026-09-22T03:54:38.483Z",
+          "type": "hook",
+          "hook": "runtime.session_start",
+          "provider": "ollama",
+          "model": "qwen3-coder-next:48k"
+        },
+        {
+          "seq": 13,
+          "at": "2026-09-22T03:54:38.485Z",
+          "type": "session",
+          "sessionId": "01a0c740-59ca-77c1-b6d3-6a2efc57517c",
+          "initialMessageCount": 0,
+          "provider": "ollama",
+          "model": "qwen3-coder-next:48k"
+        },
+        {
+          "seq": 14,
+          "at": "2026-09-22T03:54:38.485Z",
+          "type": "status",
+          "status": "running"
+        },
+        {
+          "seq": 15,
+          "at": "2026-09-22T03:54:38.486Z",
+          "type": "hook",
+          "hook": "jit-retrieve.before_agent_start.start"
+        },
+        {
+          "seq": 16,
+          "at": "2026-09-22T03:54:40.293Z",
+          "type": "hook",
+          "hook": "jit-retrieve.before_agent_start.end",
+          "contextChanged": false,
+          "toolFailed": false
+        },
+        {
+          "seq": 17,
+          "at": "2026-09-22T03:54:40.293Z",
+          "type": "hook",
+          "hook": "runtime.before_agent_start",
+          "contextSha256": "2ccac23a91086fe2efaa00612f43fffd00932b6718de647205cb456232840d70",
+          "skillSha256": "1f3ba82c0c8a91ed42a13eea9877dcff99d38e011c190799029e60c6c803d1c8",
+          "skillNames": [
+            "review-evidence"
+          ],
+          "projectContextLoaded": true
+        },
+        {
+          "seq": 18,
+          "at": "2026-09-22T03:54:40.303Z",
+          "type": "hook",
+          "hook": "runtime.before_provider_request",
+          "provider": "ollama",
+          "model": "qwen3-coder-next:48k",
+          "projectContextPresent": true,
+          "reviewSkillPresent": true,
+          "payloadSha256": "5d55aca27fb0ce1bdb090677b7df39858de3cda2da08e76bcc1c3682442e43b9"
+        },
+        {
+          "seq": 19,
+          "at": "2026-09-22T03:54:41.961Z",
+          "type": "hook",
+          "hook": "runtime.after_provider_response",
+          "status": 200
+        },
+        {
+          "seq": 20,
+          "at": "2026-09-22T03:54:41.964Z",
+          "type": "text_delta",
+          "text": "RE"
+        },
+        {
+          "seq": 21,
+          "at": "2026-09-22T03:54:41.982Z",
+          "type": "text_delta",
+          "text": "COVERY"
+        },
+        {
+          "seq": 22,
+          "at": "2026-09-22T03:54:41.999Z",
+          "type": "text_delta",
+          "text": "_OK"
+        },
+        {
+          "seq": 23,
+          "at": "2026-09-22T03:54:42.026Z",
+          "type": "terminal",
+          "status": "completed",
+          "error": null,
+          "childExited": true
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "This synthetic fixture verifies runtime behavior, not real-world review accuracy.",
+    "Optional extension loading does not prove successful memory retrieval or semantic review grading.",
+    "OpenAI API compatibility and downstream review integrations are not implemented in this release."
+  ]
+}
