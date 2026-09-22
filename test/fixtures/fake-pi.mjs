@@ -35,6 +35,12 @@ async function onCommand(command) {
   }
   if (command.type !== 'prompt') throw new Error(`Unsupported test RPC command: ${command.type}`);
   if (scenario === 'early-exit') process.exit(7);
+  if (scenario === 'stderr-chunks') {
+    process.stderr.write('first stderr chunk\n');
+    await delay(20);
+    process.stderr.write('second stderr chunk\n');
+  }
+  if (scenario === 'invalid-audit') appendFileSync(auditPath, '{invalid audit json}\n');
   if (scenario !== 'missing-hook') appendFileSync(auditPath, JSON.stringify({ hook: 'runtime.before_provider_request', fixture: true }) + '\n');
   if (scenario === 'prompt-rejected') {
     send({ type: 'response', id: command.id, success: false, error: 'Deliberately rejected by offline fixture.' });
