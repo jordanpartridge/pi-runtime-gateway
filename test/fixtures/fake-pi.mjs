@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Offline Pi RPC stand-in. Only this test fixture is allowed to synthesize audit hooks.
-import { appendFileSync } from 'node:fs';
+import { appendFileSync, readFileSync } from 'node:fs';
 import { basename, dirname, resolve } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { createInterface } from 'node:readline';
@@ -41,7 +41,26 @@ async function onCommand(command) {
     return;
   }
   response(command);
+  if (process.env.PI_GATEWAY_CHAT_FILE && scenario !== 'missing-chat-hook')
+    appendFileSync(auditPath, JSON.stringify({ hook: 'chat.context', fixture: true }) + '\n');
   if (scenario === 'stall' || scenario === 'abort-hang') return;
+  if (process.env.PI_GATEWAY_CHAT_FILE) {
+    const chat = JSON.parse(readFileSync(process.env.PI_GATEWAY_CHAT_FILE, 'utf8'));
+    record({ type: 'chat_fixture', chat });
+    if (scenario === 'client-tool') {
+      send({ type: 'message_end', message: { role: 'assistant', stopReason: 'toolUse',
+        content: [{ type: 'toolCall', id: 'call_123', name: 'lookup_status', arguments: { issue: 42 } }],
+        usage: { input: 12, output: 7, cacheRead: 2, cacheWrite: 1 } } });
+      send({ type: 'agent_settled' });
+      return;
+    }
+    if (scenario === 'internal-tool') {
+      send({ type: 'message_end', message: { role: 'assistant', stopReason: 'toolUse',
+        content: [{ type: 'text', text: 'Private internal narration' },
+          { type: 'toolCall', id: 'read_1', name: 'read', arguments: { path: 'README.md' } }],
+        usage: { input: 10, output: 5 } } });
+    }
+  }
   if (scenario === 'provider-error') {
     send({ type: 'message_end', message: { role: 'assistant', stopReason: 'error', errorMessage: 'Offline provider failure.' } });
     send({ type: 'agent_settled' });
@@ -65,7 +84,7 @@ async function onCommand(command) {
   await delay(20);
   process.stdout.write(unicode.subarray(emojiAt + 2));
   send({ type: 'message_update', assistantMessageEvent: { type: 'text_delta', delta: ' is clear.' } });
-  send({ type: 'message_end', message: { role: 'assistant', stopReason: 'stop' } });
+  send({ type: 'message_end', message: { role: 'assistant', stopReason: scenario === 'length' ? 'length' : 'stop', content: [{ type: 'text', text: 'Review: Café 👋 is clear.' }], usage: { input: 20, output: 8, cacheRead: 3, cacheWrite: 0 } } });
   send({ type: 'agent_settled' });
 }
 

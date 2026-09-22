@@ -6,6 +6,7 @@ import { randomBytes, randomUUID, timingSafeEqual, createHash } from 'node:crypt
 import { execFileSync } from 'node:child_process';
 import { Runtime, TERMINAL } from './lib/runtime.mjs';
 import { loadProfile, prepareAgent } from './lib/config.mjs';
+import { validateChat, listModels, openaiError, MAX_CHAT_BYTES } from './lib/openai.mjs';
 
 export function createGateway({ root, profile, stateDir, token, runtime, workerEnv = {} } = {}) {
   runtime ||= new Runtime({ root, profile, stateDir, workerEnv });
@@ -14,13 +15,31 @@ export function createGateway({ root, profile, stateDir, token, runtime, workerE
   const connections = new Set();
   const json = (res, status, body) => { res.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }); res.end(JSON.stringify(body)); };
   const server = http.createServer(async (req, res) => {
+    let isOpenAI = false;
     try {
+      const path = new URL(req.url, 'http://127.0.0.1').pathname;
+      isOpenAI = path === '/v1' || path.startsWith('/v1/');
+      if (isOpenAI) {
+        if (req.headers.origin) throw apiError('Browser origins are not enabled.', 403, 'permission_error', 'browser_origin_not_allowed');
+        if (!timingSafeEqual(tokenDigest, digest(req.headers.authorization || '')))
+          throw apiError('Unauthorized.', 401, 'authentication_error', 'invalid_api_key');
+        if (req.method === 'GET' && path === '/v1/models') return json(res, 200, listModels(profile));
+        if (req.method === 'POST' && path === '/v1/chat/completions') {
+          if (!/^application\/json(?:\s*;|$)/i.test(req.headers['content-type'] || ''))
+            throw apiError('Use application/json.', 415, 'invalid_request_error', 'unsupported_media_type');
+          const body = await readChatBody(req);
+          const request = validateChat(body, profile);
+          if (req.aborted || res.destroyed) return;
+          return serveChat({ res, body, request, runtime, json });
+        }
+        throw apiError('Not found.', 404, 'invalid_request_error', 'not_found');
+      }
       if (req.headers.origin) return json(res, 403, { error: 'Browser origins are not enabled.' });
       if (!timingSafeEqual(tokenDigest, digest(req.headers.authorization || ''))) return json(res, 401, { error: 'Unauthorized.' });
-      const path = new URL(req.url, 'http://127.0.0.1').pathname;
       if (req.method === 'GET' && path === '/health') return json(res, 200, {
         status: 'ready', profile: profile.id, provider: profile.provider, model: profile.model,
-        transport: 'pi-stdio-rpc', openaiCompatible: false, projects: Object.keys(profile.projects),
+        transport: 'pi-stdio-rpc', openaiCompatible: true,
+        openaiEndpoints: ['/v1/models', '/v1/chat/completions'], projects: Object.keys(profile.projects),
         piVersion: profile.piVersion, extensions: (profile.extensions || []).map(extension => extension.name),
       });
       if (req.method === 'POST' && path === '/runs') {
@@ -56,7 +75,8 @@ export function createGateway({ root, profile, stateDir, token, runtime, workerE
       const heartbeat = setInterval(() => res.write(': keepalive\n\n'), 10000);
       res.on('close', () => { clearInterval(heartbeat); runtime.off('event', listener); });
     } catch (error) {
-      if (!res.headersSent) json(res, error.status || 500, { error: error.status ? error.message : 'Internal server error.' });
+      if (res.destroyed) return;
+      if (!res.headersSent) json(res, error.status || 500, isOpenAI ? openaiError(error) : { error: error.status ? error.message : 'Internal server error.' });
       else res.destroy();
     }
   });
@@ -67,6 +87,93 @@ export function createGateway({ root, profile, stateDir, token, runtime, workerE
     for (const socket of connections) socket.destroy();
     await new Promise(resolve => server.close(resolve));
   } };
+}
+
+function apiError(message, status, type, code) {
+  return Object.assign(new Error(message), { status, type, code, param: null });
+}
+
+function readChatBody(req) {
+  return new Promise((resolveBody, reject) => {
+    const chunks = []; let length = 0;
+    const cleanup = () => {
+      req.off('data', data); req.off('end', end); req.off('aborted', aborted);
+    };
+    const fail = error => { cleanup(); req.resume(); reject(error); };
+    const failed = () => fail(apiError('Unable to read request.', 400, 'invalid_request_error', 'invalid_request'));
+    const aborted = () => fail(apiError('Request disconnected.', 400, 'invalid_request_error', 'request_aborted'));
+    const data = chunk => {
+      length += chunk.length;
+      if (length > MAX_CHAT_BYTES) return fail(apiError('Request too large.', 413, 'invalid_request_error', 'request_too_large'));
+      chunks.push(chunk);
+    };
+    const end = () => {
+      cleanup();
+      try { resolveBody(JSON.parse(Buffer.concat(chunks).toString('utf8'))); }
+      catch { reject(apiError('Invalid JSON.', 400, 'invalid_request_error', 'invalid_json')); }
+    };
+    req.on('data', data); req.once('end', end); req.once('error', failed); req.once('aborted', aborted);
+    req.once('close', () => req.off('error', failed));
+  });
+}
+
+function serveChat({ res, body, request, runtime, json }) {
+  let started;
+  try { started = runtime.start({ prompt: 'Continue the supplied conversation.', project: request.project, chat: request.chat }); }
+  catch (error) {
+    if (error.status === 409) throw apiError('Local worker is busy.', 409, 'server_error', 'worker_busy');
+    if (error.status === 429) throw apiError('Run limit reached; archive receipts and restart the server.', 429, 'rate_limit_error', 'run_limit_reached');
+    throw error;
+  }
+  const run = runtime.runs.get(started.id);
+  res.setHeader('x-pi-run-id', run.id);
+  const common = { id: `chatcmpl-${run.id}`, created: Math.floor(Date.parse(run.startedAt) / 1000), model: body.model };
+  let ended = false;
+  const cleanup = () => { runtime.off('event', listener); res.off('close', disconnected); };
+  const disconnected = () => {
+    if (ended) return;
+    ended = true; cleanup();
+    if (!TERMINAL.has(run.status)) runtime.cancel(run.id);
+  };
+  const failed = error => {
+    const timeout = ['startup_timeout', 'run_timeout'].includes(run.error);
+    error ||= apiError(timeout ? 'The Pi worker timed out.' : 'The Pi worker could not complete this request.',
+      timeout ? 504 : 502, 'server_error', timeout ? 'worker_timeout' : 'worker_failed');
+    ended = true; cleanup(); json(res, error.status, openaiError(error));
+  };
+  const finished = () => {
+    if (ended) return;
+    if (run.status !== 'completed' || !run.chatMessage) return failed();
+    const finishReason = run.finishReason || (run.stopReason === 'length' ? 'length' : 'stop');
+    if (request.stream) {
+      // Pi has finished and exited before HTTP success is committed. Some PHP
+      // clients otherwise treat even a broken, failed SSE connection as success.
+      const frames = [];
+      const chunk = (delta, finish_reason = null) => frames.push({ ...common, object: 'chat.completion.chunk',
+        choices: [{ index: 0, delta, finish_reason }], ...(request.includeUsage ? { usage: null } : {}) });
+      chunk({ role: 'assistant', content: '' });
+      if (run.chatMessage.content) chunk({ content: run.chatMessage.content });
+      if (run.chatMessage.tool_calls?.length)
+        chunk({ tool_calls: run.chatMessage.tool_calls.map((call, index) => ({ index, ...call })) });
+      chunk({}, finishReason);
+      if (request.includeUsage) frames.push({ ...common, object: 'chat.completion.chunk', choices: [], usage: run.usage || null });
+      const wire = frames.map(frame => `data: ${JSON.stringify(frame)}\n\n`).join('') + 'data: [DONE]\n\n';
+      if (Buffer.byteLength(wire) > 1000000)
+        return failed(apiError('Completion exceeds the streaming response size limit.', 502, 'server_error', 'response_too_large'));
+      ended = true; cleanup();
+      res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-store', Connection: 'close', 'X-Accel-Buffering': 'no' });
+      res.end(wire);
+    } else {
+      ended = true; cleanup();
+      json(res, 200, { ...common, object: 'chat.completion',
+        choices: [{ index: 0, message: run.chatMessage, finish_reason: finishReason }],
+        ...(run.usage ? { usage: run.usage } : {}) });
+    }
+  };
+  const listener = (id, event) => { if (id === run.id && event.type === 'terminal') finished(); };
+  res.once('close', disconnected);
+  runtime.on('event', listener);
+  if (TERMINAL.has(run.status)) finished();
 }
 
 function acquireStateLock(stateDir) {

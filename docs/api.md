@@ -9,6 +9,8 @@ with a valid token. This API is intended for trusted local service clients.
 
 | Method | Route | Successful response |
 | --- | --- | --- |
+| GET | `/v1/models` | `200`, configured project/model aliases |
+| POST | `/v1/chat/completions` | `200`, completion or standard SSE chunks |
 | GET | `/health` | `200`, configured profile, model, transport, and project keys |
 | POST | `/runs` | `202`, initial run snapshot |
 | GET | `/runs/:id` | `200`, current or final run snapshot |
@@ -17,7 +19,8 @@ with a valid token. This API is intended for trusted local service clients.
 
 `GET /health` reports configured service state. It does not run inference or prove
 that the configured inference provider can currently serve the model. Its `transport` is `pi-stdio-rpc` and
-`openaiCompatible` is `false`.
+`openaiCompatible` is `true`, scoped by `openaiEndpoints` to models and Chat
+Completions. See [the compatibility guide](openai.md) for its supported subset.
 
 ## Start a run
 
@@ -107,7 +110,8 @@ leave the state directory's `server.lock` in place.
 
 ## Errors and limits
 
-Errors are JSON objects with an `error` string. Common HTTP responses:
+Native-route errors are JSON objects with an `error` string. `/v1` errors use
+OpenAI-style nested error objects. Common HTTP responses:
 
 | Status | Cause |
 | --- | --- |
@@ -141,6 +145,7 @@ The state directory contains:
 - `token`: shared bearer token; keep private.
 - `server.json`: address, PID, and profile information for the server.
 - `server.lock`: exclusive ownership record containing the server PID and a nonce.
+- `runs/<run-id>/chat.json`: private conversation input for compatibility requests.
 - `runs/<run-id>/hooks.jsonl`: hook receipts.
 - `runs/<run-id>/events.jsonl`: streamed events.
 - `runs/<run-id>/receipt.json`: final run snapshot.

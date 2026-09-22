@@ -66,9 +66,10 @@ The installer links `~/.local/bin/pi-runtime-gateway` to this checkout. Keep the
 checkout in place, and add `~/.local/bin` to PATH if needed. The command also accepts
 `setup` for configuration. Pi itself is resolved through PATH or `--pi-binary`.
 
-The API currently uses `/runs`, status, SSE events, and cancellation. It is **not
-yet OpenAI-compatible**. See [the API guide](docs/api.md) for a complete request
-example and the bearer-token requirement.
+Use the **OpenAI-compatible Chat Completions API** at `/v1` with an existing
+client, or `/runs` for explicit run status, events, and cancellation.
+See [OpenAI client setup and tool ownership](docs/openai.md) and the
+[native API guide](docs/api.md). Responses API is not implemented.
 
 ## Configure a profile
 
@@ -183,6 +184,8 @@ real Pi and the configured inference provider (cloud requests may be billed):
 npm run prove
 ```
 
+The Chat Completions adapter has a separate [SDK and PHP proof report](evidence/openai-proof-report.md).
+
 Live inference has been verified with local Ollama. Cloud setup, credential
 isolation, and real Pi cloud-profile initialization are tested; successful cloud
 inference with a real API key has **not** been verified in this release.
@@ -192,8 +195,8 @@ for the tested configuration, checks, and limits of the evidence. A transport
 proof establishes lifecycle behavior; review quality and memory retrieval need
 their own evaluations.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) to develop or report issues. OpenAI API
-compatibility, Laravel clients, Lexi integration, and durable learning promotion
-are future work. The current endpoint is the gateway's own HTTP API.
+See [CONTRIBUTING.md](CONTRIBUTING.md) to develop or report issues. OpenAI
+Responses, direct Lexi integration, and durable learning promotion are future work.
+Chat Completions support and the Laravel client boundary are described above.
 
 MIT licensed; see [LICENSE](LICENSE).
